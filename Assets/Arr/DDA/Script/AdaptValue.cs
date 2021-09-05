@@ -1,4 +1,4 @@
-namespace Arr.DDA
+namespace Arr.DDA.Script
 {
     public class AdaptValue : IEvaluator
     {

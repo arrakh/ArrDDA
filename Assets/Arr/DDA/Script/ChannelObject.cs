@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace Arr.DDA
+namespace Arr.DDA.Script
 {
     [CreateAssetMenu(fileName = "New Channel", menuName = ProjectConst.PROJECT_NAME + "/Channel", order = 0)]
     public class ChannelObject : ScriptableObject

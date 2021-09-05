@@ -1,6 +1,6 @@
 using System;
 
-namespace Arr.DDA
+namespace Arr.DDA.Script
 {
     [Serializable]
     public class Channel : IDisposable
@@ -12,6 +12,7 @@ namespace Arr.DDA
         private Metric challengeMetric;
         private Metric skillMetric;
         private ChannelSetting setting;
+        private Type test;
 
         public Channel(string channelName, IEvaluator evaluator, Metric challengeMetric, Metric skillMetric, ChannelSetting setting)
         {
@@ -20,6 +21,7 @@ namespace Arr.DDA
             this.challengeMetric = challengeMetric;
             this.skillMetric = skillMetric;
             this.setting = setting;
+
         }
 
         public void Dispose()
