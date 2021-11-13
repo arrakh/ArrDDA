@@ -1,75 +1,212 @@
 using System;
-using Arr.DDA;
 using Arr.DDA.Script;
+using Syrus.Plugins.ChartEditor;
 using UnityEditor;
 using UnityEngine;
 
-public class ChannelManagerEditorWindow : EditorWindow
+namespace Arr.DDA.Editor
 {
-    private UnityEngine.Object[] metrics;
-    private UnityEngine.Object[] channels;
+    public class ChannelManagerEditorWindow : EditorWindow
+    {
+        private MetricObject[] metrics;
+        private UnityEngine.Object[] channels;
 
-    private int selectedMetricIndex = 0;
-    private string metricName = String.Empty;
+        private string metricName = String.Empty;
+        private string channelName = String.Empty;
 
-    private bool createMetricFoldout;
+        private bool createMetricFoldout;
+        private bool createChannelFoldout;
 
-    private GUIStyle centerText;
+        private GUIStyle centerText;
+
+        private EvaluatorEditorHandler evalHandler;
+        private DDAGraph graph;
     
-    [MenuItem("ArrDDA/Channel Manager")]
-    public static void CreateWindow()
-    {
-        ChannelManagerEditorWindow window = GetWindow<ChannelManagerEditorWindow>();
-        
-        window.Show();
-    }
-
-    private void OnGUI()
-    {
-        centerText = new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleCenter};
-
-        metrics = Resources.LoadAll(ProjectConst.FOLDER_METRICS, typeof(MetricObject));
-        channels = Resources.LoadAll(ProjectConst.FOLDER_CHANNELS, typeof(ChannelObject));
-
-        
-        selectedMetricIndex = EditorGUILayout.Popup(label: "Metric: ",selectedMetricIndex, Array.ConvertAll(metrics, x => x.name));
-        
-        EditorGUILayout.Space(20f);
-        
-        GUILayout.Label("Channel Tools", centerText);
-        using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+        [MenuItem("ArrDDA/Channel Manager")]
+        public static void CreateWindow()
         {
-            createMetricFoldout = EditorGUILayout.Foldout(createMetricFoldout, "Create a new Metric");
+            ChannelManagerEditorWindow window = GetWindow<ChannelManagerEditorWindow>();
+        
+            window.Show();
+        }
 
-            if (createMetricFoldout)
+        private int activeChannelIndex;
+        private ChannelObject activeChannel = null;
+        private void OnGUI()
+        {
+            centerText = new GUIStyle(GUI.skin.label)
             {
-                metricName = EditorGUILayout.TextField("Metric Name: ", metricName);
+                alignment = TextAnchor.MiddleCenter, 
+                fontStyle = FontStyle.Bold,
+                fontSize = 24
+            };
+            
+            if (evalHandler == null) evalHandler = new EvaluatorEditorHandler();
+            if (graph == null) graph = new DDAGraph("Testing");
 
-                using (new EditorGUI.DisabledScope(String.IsNullOrEmpty(metricName)))
+            metrics = Resources.LoadAll<MetricObject>(ProjectConst.FOLDER_METRICS);
+            channels = Resources.LoadAll(ProjectConst.FOLDER_CHANNELS, typeof(ChannelObject));
+
+            EditorGUILayout.BeginVertical();
+            GUILayout.Space(10f);
+            GUILayout.Label("DDA Manager", centerText);
+            GUILayout.Space(10f);
+
+            if (channels.Length > 0)
+            {
+                activeChannelIndex = EditorGUILayout.Popup(label: "Challenge Metric", activeChannelIndex, 
+                    Array.ConvertAll(channels, x => x.name));
+
+                activeChannel = channels[activeChannelIndex] as ChannelObject;
+                
+                if(activeChannel != null) 
+                    OnActiveChannelChanged(activeChannel);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("No Channel detected. Create a new channel in the Channel Tools section below", MessageType.Warning);
+            }
+
+            GUILayout.Space(20f);
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EditorGUILayout.EndVertical();
+        
+            GUILayout.Label("Channel Tools", centerText);
+            GUILayout.Space(5f);
+            CreateMetricFoldout();
+            CreateChannelFoldout();
+        
+            Repaint();
+
+        }
+
+        private void OnActiveChannelChanged(ChannelObject channel)
+        {
+            graph.Draw();
+            graph.Setting(channel.Setting, 0.5f);
+        }
+
+        private void CreateMetricFoldout()
+        {
+            using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                createMetricFoldout = EditorGUILayout.Foldout(createMetricFoldout, "Create New Metric");
+
+                if (createMetricFoldout)
                 {
-                    if (GUILayout.Button("Create Metric"))
+                    metricName = EditorGUILayout.TextField("Metric Name", metricName);
+
+                    using (new EditorGUI.DisabledScope(String.IsNullOrEmpty(metricName)))
                     {
-                        CreateMetric(metricName);
-                        metricName = String.Empty;
-                        GUIUtility.keyboardControl = 0;
+                        if (GUILayout.Button("Create Metric"))
+                        {
+                            CreateMetric(metricName);
+                            metricName = String.Empty;
+                            GUIUtility.keyboardControl = 0;
+                        }
                     }
                 }
-                
             }
+
         }
-        
-        Repaint();
 
-    }
+        private void CreateMetric(string name)
+        {
+            MetricObject obj = CreateInstance<MetricObject>();
+        
+            AssetDatabase.CreateAsset(obj, $"{ProjectConst.FOLDER_RESOURCES}/{ProjectConst.FOLDER_METRICS}/{name}.asset");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();    
+        
+            EditorGUIUtility.PingObject(obj);
+        }
 
-    private void CreateMetric(string name)
-    {
-        MetricObject obj = CreateInstance<MetricObject>();
+    
+
+
+        private int challengeIndex, skillIndex, evalIndex;
+        private ChannelSetting channelSetting = new ChannelSetting();
+        private bool channelSettingFoldout;
+        private DDAGraph createChannelGraph;
+    
+        private void CreateChannelFoldout()
+        {
+            using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                createChannelFoldout = EditorGUILayout.Foldout(createChannelFoldout, "Create New Channel");
+
+                if (createChannelFoldout)
+                {
+                    if (createChannelGraph == null) createChannelGraph = new DDAGraph("New Graph");
+                    createChannelGraph.Setting(channelSetting, 0.5f);
+                    createChannelGraph.Draw();
+                    
+                    var eval = evalHandler.FindEvaluator();
+                
+                    channelName = EditorGUILayout.TextField("Channel Name", channelName);
+
+                    if (metrics.Length > 0)
+                    {
+                        challengeIndex = EditorGUILayout.Popup(label: "Challenge Metric", challengeIndex, 
+                            Array.ConvertAll(metrics, x => x.name));
+                        skillIndex = EditorGUILayout.Popup(label: "Skill Metric", skillIndex, 
+                            Array.ConvertAll(metrics, x => x.name)); 
+                    }
+                    else
+                    {
+                        EditorGUILayout.HelpBox("No Metric detected. Create a new metric first!", MessageType.Warning);
+                    }
+
+                    evalIndex = EditorGUILayout.Popup(label: "Evaluator", evalIndex, 
+                        Array.ConvertAll(eval, x => x.Name));
+
+                    using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+                    {
+                        channelSettingFoldout = EditorGUILayout.Foldout(channelSettingFoldout, "Channel Setting");
+
+                        if (channelSettingFoldout)
+                        {
+                            channelSetting.AnxietyThreshold = EditorGUILayout.FloatField("Anxiety Threshold", channelSetting.AnxietyThreshold);
+                            channelSetting.BoredomThreshold = EditorGUILayout.FloatField("Boredom Threshold", channelSetting.BoredomThreshold);
+                            channelSetting.FlowOffset = EditorGUILayout.FloatField("Flow Offset", channelSetting.FlowOffset);
+                            channelSetting.Width = EditorGUILayout.FloatField("Width", channelSetting.Width);
+                            channelSetting.Slant = EditorGUILayout.FloatField("Slant", channelSetting.Slant);
+                        }
+                    }
+
+                    using (new EditorGUI.DisabledScope(String.IsNullOrEmpty(channelName) && metrics.Length > 0))
+                    {
+                        if (GUILayout.Button("Create Channel"))
+                        {
+                            Type evalType = evalHandler.GetEvaluatorType(evalIndex);
+                        
+                            CreateChannel(channelName, evalType, metrics[challengeIndex], metrics[skillIndex], channelSetting);
+                            channelName = String.Empty;
+                            GUIUtility.keyboardControl = 0;
+                        }
+                    }
+                }
+            }
+
+        }
+    
+        private void CreateChannel(string name, Type evaluator, MetricObject challenge, MetricObject skill, ChannelSetting setting)
+        {
+            ChannelObject obj = CreateInstance<ChannelObject>();
+
+            obj.ChannelName = name;
+            obj.Setting = setting;
+            obj.ChallengeMetric = challenge;
+            obj.SkillMetric = skill;
+            obj.Evaluator = evaluator;
         
-        AssetDatabase.CreateAsset(obj, $"{ProjectConst.FOLDER_RESOURCES}/{ProjectConst.FOLDER_METRICS}/{name}.asset");
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
+            AssetDatabase.CreateAsset(obj, $"{ProjectConst.FOLDER_RESOURCES}/{ProjectConst.FOLDER_CHANNELS}/{name}.asset");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();    
         
-        EditorGUIUtility.PingObject(obj);
+            EditorGUIUtility.PingObject(obj);
+        }
+
+
     }
 }

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953138926a114d7f8724d7abd4bcca90, type: 3}
+  m_Name: Enemy AI
+  m_EditorClassIdentifier: 
+  ChannelName: Enemy AI
+  ChallengeMetric: {fileID: 11400000, guid: bc0c3ff8942441e43b4a3c645ae10849, type: 2}
+  SkillMetric: {fileID: 11400000, guid: 6298ea64641e6234f9c5090bb1910c5c, type: 2}
+  Setting:
+    AnxietyThreshold: 0.67
+    BoredomThreshold: 1.03
+    FlowOffset: -0.06
+    Width: 0.26
+    Slant: 1.5

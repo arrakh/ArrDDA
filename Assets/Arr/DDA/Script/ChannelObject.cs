@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Arr.DDA.Script
@@ -6,38 +7,18 @@ namespace Arr.DDA.Script
     public class ChannelObject : ScriptableObject
     {
         public string ChannelName;
-        public EvaluateType EvaluateType;
         public MetricObject ChallengeMetric;
         public MetricObject SkillMetric;
         public ChannelSetting Setting;
+        public Type Evaluator;
 
         private Channel channel = null;
 
-        private void OnEnable()
+        public void CreateChannel()
         {
-            if(channel == null) CreateChannel();
+            IEvaluator eval = Activator.CreateInstance(Evaluator) as IEvaluator;
+            channel = new Channel(ChannelName, eval, ChallengeMetric.GetMetric(), SkillMetric.GetMetric(), Setting);
         }
 
-        private void CreateChannel()
-        {
-            IEvaluator evaluator = null;
-            switch (EvaluateType)
-            {
-                case EvaluateType.Adapt:
-                    evaluator = new AdaptValue();
-                    break;
-                case EvaluateType.Restrain:
-                    evaluator = new RestrainValue();
-                    break;
-            }
-
-            channel = new Channel(ChannelName, evaluator, ChallengeMetric.GetMetric(), SkillMetric.GetMetric(), Setting);
-        }
-    }
-
-    public enum EvaluateType
-    {
-        Adapt,
-        Restrain
     }
 }
