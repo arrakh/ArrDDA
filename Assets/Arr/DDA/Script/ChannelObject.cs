@@ -6,18 +6,31 @@ namespace Arr.DDA.Script
     [CreateAssetMenu(fileName = "New Channel", menuName = ProjectConst.PROJECT_NAME + "/Channel", order = 0)]
     public class ChannelObject : ScriptableObject
     {
+        public Action<float> OnEvaluated;
         public string ChannelName;
-        public MetricObject ChallengeMetric;
-        public MetricObject SkillMetric;
+        public MetricObject DifficultyMetric;
+        public MetricObject ProgressionMetric;
         public ChannelSetting Setting;
-        public Type Evaluator;
+        [HideInInspector] public string Evaluator;
 
         private Channel channel = null;
 
-        public void CreateChannel()
+        public void Initialize()
         {
-            IEvaluator eval = Activator.CreateInstance(Evaluator) as IEvaluator;
-            channel = new Channel(ChannelName, eval, ChallengeMetric.GetMetric(), SkillMetric.GetMetric(), Setting);
+            var evalType = Type.GetType(Evaluator);
+            if (evalType == null) throw new Exception($"No Evaluator found with type {Evaluator}!");
+            IEvaluator eval = Activator.CreateInstance(evalType) as IEvaluator;
+            channel = new Channel(ChannelName, eval, DifficultyMetric.GetMetric(), ProgressionMetric.GetMetric(), Setting);
+            channel.OnEvaluated = OnEvaluated;
+            Debug.Log($"Created Channel for {ChannelName} with Evaluator {eval.GetType()}");
+        }
+
+        public float Evaluate(EvaluationParameter parameter) => channel.Evaluate(parameter);
+
+        public float Evaluate()
+        {
+            var param = new EvaluationParameter();
+            return channel.Evaluate(param);
         }
 
     }

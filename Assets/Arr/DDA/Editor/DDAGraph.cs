@@ -162,8 +162,8 @@ namespace Arr.DDA.Editor
         public void Setting(ChannelSetting setting, float padding)
         {
             this.padding = padding;
-            upper = setting.BoredomThreshold;
-            lower = setting.AnxietyThreshold;
+            upper = setting.AnxietyThreshold;
+            lower = setting.BoredomThreshold;
             width = setting.Width;
             offset = setting.FlowOffset;
             slant = setting.Slant;

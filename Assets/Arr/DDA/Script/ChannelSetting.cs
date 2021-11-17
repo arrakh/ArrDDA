@@ -28,5 +28,8 @@ namespace Arr.DDA
             Width = width;
             Slant = slant;
         }
+
+        public float GetAnxietyThreshold(float progression) => (Slant * progression) + (AnxietyThreshold * Width) + FlowOffset;
+        public float GetBoredomThreshold(float progression) => (Slant * progression) - (BoredomThreshold * Width) + FlowOffset;
     }
 }

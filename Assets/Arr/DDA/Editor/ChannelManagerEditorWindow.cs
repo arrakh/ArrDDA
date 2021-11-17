@@ -32,6 +32,7 @@ namespace Arr.DDA.Editor
 
         private int activeChannelIndex;
         private ChannelObject activeChannel = null;
+        private Vector2 scrollPosition = Vector2.zero;
         private void OnGUI()
         {
             centerText = new GUIStyle(GUI.skin.label)
@@ -47,6 +48,7 @@ namespace Arr.DDA.Editor
             metrics = Resources.LoadAll<MetricObject>(ProjectConst.FOLDER_METRICS);
             channels = Resources.LoadAll(ProjectConst.FOLDER_CHANNELS, typeof(ChannelObject));
 
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, true);
             EditorGUILayout.BeginVertical();
             GUILayout.Space(10f);
             GUILayout.Label("DDA Manager", centerText);
@@ -75,7 +77,8 @@ namespace Arr.DDA.Editor
             GUILayout.Space(5f);
             CreateMetricFoldout();
             CreateChannelFoldout();
-        
+            EditorGUILayout.EndScrollView();
+
             Repaint();
 
         }
@@ -124,7 +127,7 @@ namespace Arr.DDA.Editor
     
 
 
-        private int challengeIndex, skillIndex, evalIndex;
+        private int DifficultyIndex, progressionIndex, evalIndex;
         private ChannelSetting channelSetting = new ChannelSetting();
         private bool channelSettingFoldout;
         private DDAGraph createChannelGraph;
@@ -147,9 +150,9 @@ namespace Arr.DDA.Editor
 
                     if (metrics.Length > 0)
                     {
-                        challengeIndex = EditorGUILayout.Popup(label: "Challenge Metric", challengeIndex, 
+                        DifficultyIndex = EditorGUILayout.Popup(label: "Difficulty Metric", DifficultyIndex, 
                             Array.ConvertAll(metrics, x => x.name));
-                        skillIndex = EditorGUILayout.Popup(label: "Skill Metric", skillIndex, 
+                        progressionIndex = EditorGUILayout.Popup(label: "Progression Metric", progressionIndex, 
                             Array.ConvertAll(metrics, x => x.name)); 
                     }
                     else
@@ -180,7 +183,7 @@ namespace Arr.DDA.Editor
                         {
                             Type evalType = evalHandler.GetEvaluatorType(evalIndex);
                         
-                            CreateChannel(channelName, evalType, metrics[challengeIndex], metrics[skillIndex], channelSetting);
+                            CreateChannel(channelName, evalType, metrics[DifficultyIndex], metrics[progressionIndex], channelSetting);
                             channelName = String.Empty;
                             GUIUtility.keyboardControl = 0;
                         }
@@ -190,15 +193,15 @@ namespace Arr.DDA.Editor
 
         }
     
-        private void CreateChannel(string name, Type evaluator, MetricObject challenge, MetricObject skill, ChannelSetting setting)
+        private void CreateChannel(string name, Type evaluator, MetricObject difficulty, MetricObject progression, ChannelSetting setting)
         {
             ChannelObject obj = CreateInstance<ChannelObject>();
 
             obj.ChannelName = name;
             obj.Setting = setting;
-            obj.ChallengeMetric = challenge;
-            obj.SkillMetric = skill;
-            obj.Evaluator = evaluator;
+            obj.DifficultyMetric = difficulty;
+            obj.ProgressionMetric = progression;
+            obj.Evaluator = evaluator.AssemblyQualifiedName;
         
             AssetDatabase.CreateAsset(obj, $"{ProjectConst.FOLDER_RESOURCES}/{ProjectConst.FOLDER_CHANNELS}/{name}.asset");
             AssetDatabase.SaveAssets();

@@ -13,7 +13,26 @@ namespace Arr.DDA.Editor
         private ChannelObject Channel => target as ChannelObject;
 
         private int evalIndex;
-        
+        private int lastIndex;
+
+        private void OnEnable()
+        {
+            Channel.OnEvaluated += OnEvaluated;
+        }
+
+        private void OnDisable()
+        {
+            Channel.OnEvaluated -= OnEvaluated;
+        }
+
+        private void OnEvaluated(float obj)
+        {
+            if (graph == null) return;
+            float progression = Channel.ProgressionMetric.GetMetric().Value;
+            float difficulty = Channel.DifficultyMetric.GetMetric().Value;
+            graph.AddPoint(new Vector2(progression, difficulty));
+        }
+
         public override void OnInspectorGUI()
         {
             GUILayout.BeginVertical();
@@ -25,11 +44,18 @@ namespace Arr.DDA.Editor
             graph.Setting(Channel.Setting, 0.5f);
             base.OnInspectorGUI();
 
+            EditorGUILayout.Separator();
+            EditorGUILayout.LabelField($"Evaluator: {Type.GetType(Channel.Evaluator)?.Name}");
+            
             var eval = evalHandler.FindEvaluator();
-            evalIndex = EditorGUILayout.Popup(label: "Evaluator", evalIndex, 
+            evalIndex = EditorGUILayout.Popup(label: "Change Evaluator", evalIndex, 
                 Array.ConvertAll(eval, x => x.Name));
 
-            Channel.Evaluator = eval[evalIndex];
+            if (lastIndex != evalIndex)
+            {
+                lastIndex = evalIndex;
+                Channel.Evaluator = eval[evalIndex].AssemblyQualifiedName;
+            }
             
             
             GUILayout.EndVertical();

@@ -22,7 +22,7 @@ namespace Arr.DDA
 
         public void SetValue(float newValue)
         {
-            Value = Mathf.Clamp(newValue, MinValue, MaxValue);
+            Value = newValue;
             OnChanged?.Invoke(Value);
         }
 

@@ -20,9 +20,9 @@ namespace Arr.DDA.Editor
                 IEnumerable<Type> typeToAdd;
                 try
                 {
-                    typeToAdd = assembly.GetTypes().Where(t => typeof(IEvaluator).IsAssignableFrom(t) && !t.IsInterface);
+                    typeToAdd = assembly.GetTypes().Where(TypeCheck);
                 } catch (ReflectionTypeLoadException e) {
-                    typeToAdd =  e.Types.Where(t => t != null && typeof(IEvaluator).IsAssignableFrom(t) && !t.IsInterface);
+                    typeToAdd =  e.Types.Where(t => t != null && TypeCheck(t));
                 }
         
                 totalTypes = totalTypes.Concat(typeToAdd).ToArray();
@@ -32,6 +32,8 @@ namespace Arr.DDA.Editor
         
             return evaluators;
         }
+
+        private bool TypeCheck(Type t) => typeof(IEvaluator).IsAssignableFrom(t) && !t.IsInterface && !t.IsGenericType;
 
         public Type GetEvaluatorType(int index) => FindEvaluator()[index];
     }
