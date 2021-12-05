@@ -28,8 +28,8 @@ namespace Arr.DDA.Editor
         private void OnEvaluated(float obj)
         {
             if (graph == null) return;
-            float progression = Channel.ProgressionMetric.GetMetric().Value;
-            float difficulty = Channel.DifficultyMetric.GetMetric().Value;
+            float progression = Channel.ProgressionMetric.Get().Value;
+            float difficulty = Channel.DifficultyMetric.Get().Value;
             graph.AddPoint(new Vector2(progression, difficulty));
         }
 

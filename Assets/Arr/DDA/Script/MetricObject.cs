@@ -24,10 +24,13 @@ namespace Arr.DDA
             metric = new Metric(DefaultValue, MinMaxValue.x, MinMaxValue.y, OnChanged);
         }
 
-        public Metric GetMetric()
+        public Metric Get()
         {
             if(metric == null) CreateMetric();
             return metric;
         }
+
+        public void Set(float value) => metric.SetValue(value);
+        public void SetDelta(float delta) => metric.SetValue(metric.Value + delta);
     }
 }

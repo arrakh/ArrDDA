@@ -18,9 +18,8 @@ public class MockupScript : MonoBehaviour
 
     public void AddSkill()
     {
-        var current = progression.GetMetric().Value;
         var rand = Random.Range(0.1f, 0.6f);
-        progression.GetMetric().SetValue(current + rand);
+        progression.SetDelta(rand);
         parameter.isSuccess = Random.Range(0, 2) == 0;
         
         Debug.Log($"Added Skill by {rand} with param success {parameter.isSuccess}");

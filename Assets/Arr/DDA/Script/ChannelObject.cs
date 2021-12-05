@@ -20,7 +20,7 @@ namespace Arr.DDA.Script
             var evalType = Type.GetType(Evaluator);
             if (evalType == null) throw new Exception($"No Evaluator found with type {Evaluator}!");
             IEvaluator eval = Activator.CreateInstance(evalType) as IEvaluator;
-            channel = new Channel(ChannelName, eval, DifficultyMetric.GetMetric(), ProgressionMetric.GetMetric(), Setting);
+            channel = new Channel(ChannelName, eval, DifficultyMetric.Get(), ProgressionMetric.Get(), Setting);
             channel.OnEvaluated = OnEvaluated;
             Debug.Log($"Created Channel for {ChannelName} with Evaluator {eval.GetType()}");
         }
