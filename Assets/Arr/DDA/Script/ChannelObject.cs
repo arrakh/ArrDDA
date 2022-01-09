@@ -17,6 +17,9 @@ namespace Arr.DDA.Script
 
         public void Initialize()
         {
+            DifficultyMetric.CreateMetric();
+            ProgressionMetric.CreateMetric();
+            
             var evalType = Type.GetType(Evaluator);
             if (evalType == null) throw new Exception($"No Evaluator found with type {Evaluator}!");
             IEvaluator eval = Activator.CreateInstance(evalType) as IEvaluator;

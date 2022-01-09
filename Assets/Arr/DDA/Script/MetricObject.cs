@@ -13,14 +13,16 @@ namespace Arr.DDA
         public Action<float> OnChanged;
 
         private Metric metric = null;
+        public float Value => Get().Value;
 
         private void Awake()
         {
             if(metric == null) CreateMetric();
         }
 
-        void CreateMetric()
+        public void CreateMetric()
         {
+            if (metric != null) return;
             metric = new Metric(DefaultValue, MinMaxValue.x, MinMaxValue.y, OnChanged);
         }
 
@@ -30,7 +32,8 @@ namespace Arr.DDA
             return metric;
         }
 
+
         public void Set(float value) => metric.SetValue(value);
-        public void SetDelta(float delta) => metric.SetValue(metric.Value + delta);
+        public void Add(float delta) => metric.SetValue(metric.Value + delta);
     }
 }

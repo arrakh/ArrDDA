@@ -1,26 +1,42 @@
 using System;
 using System.Collections.Generic;
+using Arr.DDA;
 using Arr.DDA.Script;
+using Arr.DDA.Script.Evaluators;
 using UnityEngine;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace MockupGame
 {
     public class GameManager : MonoBehaviour
     {
-        public int Score;
+        public MetricObject Score;
+        public MetricObject TargetTile;
+        public MetricObject TileSize;
+        public ChannelObject TargetChannel;
+        public ChannelObject SizeChannel;
+
+        public AdaptParameter Parameter = new AdaptParameter();
+        
         public float timeLeft;
 
-        [SerializeField] private GameObject gridPrefab;
+        [SerializeField] private GameObject tilePrefab;
         [SerializeField] private GridLayout gridLayout;
-        [SerializeField] private ChannelObject channel;
+        [SerializeField] private Image timerFill;
 
         private List<Tile> tiles = new List<Tile>();
         private bool isPlaying = false;
+        private float maxTime = 20f;
+        private int currentTile = 0;
 
         private void Start()
         {
-            GenerateGrid(3);
-            timeLeft = 3f;
+            TargetChannel.Initialize();
+            SizeChannel.Initialize();
+
+            GenerateGrid((int)TileSize.Value);
+            timeLeft = maxTime;
             isPlaying = true;
         }
 
@@ -34,13 +50,22 @@ namespace MockupGame
             if (!isPlaying) return;
 
             timeLeft -= Time.deltaTime;
+            timerFill.fillAmount = timeLeft / maxTime;
 
-            if (timeLeft < 0) OnRoundOver();
+            if (timeLeft < 0) OnRoundOver(false);
         }
 
-        private void OnRoundOver()
+        private void OnRoundOver(bool hasSucceded)
         {
+            Score.Add(1);
+            Parameter.isSuccess = hasSucceded;
+            TargetChannel.Evaluate(Parameter);
+            SizeChannel.Evaluate(Parameter);
             
+            currentTile = 0;
+            
+            timeLeft = maxTime;
+            GenerateGrid((int)TileSize.Value);
         }
 
         public void GenerateGrid(int size)
@@ -49,8 +74,21 @@ namespace MockupGame
 
             for (int i = 0; i < size * size; i++)
             {
-                var tile = Instantiate(gridPrefab, gridLayout.transform).GetComponent<Tile>();
+                var tile = Instantiate(tilePrefab, gridLayout.transform).GetComponent<Tile>();
                 tile.OnClicked += OnTileClicked;
+                tiles.Add(tile);
+            }
+
+            for (int i = 0; i < (int)TargetTile.Value; i++)
+            {
+                Tile randTile;
+
+                do
+                {
+                    randTile = tiles[Random.Range(0, tiles.Count)];
+                } while (randTile.IsOn);
+
+                randTile.SetOn(true);
             }
         }
 
@@ -70,8 +108,13 @@ namespace MockupGame
             if (tile.IsOn)
             {
                 tile.SetOn(false);
-                Score++;
+                currentTile++;
+                if (currentTile >= (int)TargetTile.Value)
+                    OnRoundOver(true);
+
             }
+            else OnRoundOver(false);
+
         }
     }
 }

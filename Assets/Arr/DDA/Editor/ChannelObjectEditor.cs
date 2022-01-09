@@ -15,6 +15,8 @@ namespace Arr.DDA.Editor
         private int evalIndex;
         private int lastIndex;
 
+        private string lastName = String.Empty;
+
         private void OnEnable()
         {
             Channel.OnEvaluated += OnEvaluated;
@@ -39,13 +41,19 @@ namespace Arr.DDA.Editor
             
             if (graph == null) graph = new DDAGraph(Channel.ChannelName);
             if (evalHandler == null) evalHandler = new EvaluatorEditorHandler();
+
+            if (!lastName.Equals(Channel.ChannelName))
+            {
+                lastName = Channel.ChannelName;
+                graph.SetName(lastName);
+            }
             
             graph.Draw();
-            graph.Setting(Channel.Setting, 0.5f);
+            graph.Setting(Channel.Setting);
             base.OnInspectorGUI();
 
             EditorGUILayout.Separator();
-            EditorGUILayout.LabelField($"Evaluator: {Type.GetType(Channel.Evaluator)?.Name}");
+            if(Channel.Evaluator != null)EditorGUILayout.LabelField($"Evaluator: {Type.GetType(Channel.Evaluator)?.Name}");
             
             var eval = evalHandler.FindEvaluator();
             evalIndex = EditorGUILayout.Popup(label: "Change Evaluator", evalIndex, 
@@ -59,6 +67,7 @@ namespace Arr.DDA.Editor
             
             
             GUILayout.EndVertical();
+            Repaint();
         }
         
         

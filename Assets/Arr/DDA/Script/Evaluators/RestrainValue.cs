@@ -4,7 +4,7 @@ namespace Arr.DDA.Script.Evaluators
 {
     public class RestrainValue : Evaluator<EvaluationParameter>
     {
-        private const float REGULATION_VALUE = 0.4f;
+        private const float REGULATION_VALUE = 1;
         public override float OnEvaluate(Metric difficulty, Metric progression, ChannelSetting channel, EvaluationParameter parameter)
         {
             float currentDiff = difficulty.Value;

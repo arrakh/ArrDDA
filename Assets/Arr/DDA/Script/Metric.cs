@@ -5,12 +5,13 @@ namespace Arr.DDA
 {
     public class Metric : IDisposable
     {
-        public Metric(float value, float minValue = default, float maxValue = default, Action<float> onChanged = null)
+        public Metric(float value, float minValue = 0f, float maxValue = 0f, Action<float> onChanged = null)
         {
             OnChanged += onChanged;
             Value = value;
             MinValue = minValue;
             MaxValue = maxValue;
+            shouldClamp = Math.Abs(minValue - 0f) > 0.01 || Math.Abs(maxValue - 0f) > 0.01f;
         }
 
         public float Value { get; private set; }
@@ -20,9 +21,11 @@ namespace Arr.DDA
 
         public Action<float> OnChanged;
 
+        private bool shouldClamp;
+
         public void SetValue(float newValue)
         {
-            Value = newValue;
+            Value = shouldClamp? Mathf.Clamp(newValue, MinValue, MaxValue) : newValue;
             OnChanged?.Invoke(Value);
         }
 

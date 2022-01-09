@@ -86,7 +86,7 @@ namespace Arr.DDA.Editor
         private void OnActiveChannelChanged(ChannelObject channel)
         {
             graph.Draw();
-            graph.Setting(channel.Setting, 0.5f);
+            graph.Setting(channel.Setting);
         }
 
         private void CreateMetricFoldout()
@@ -141,7 +141,7 @@ namespace Arr.DDA.Editor
                 if (createChannelFoldout)
                 {
                     if (createChannelGraph == null) createChannelGraph = new DDAGraph("New Graph");
-                    createChannelGraph.Setting(channelSetting, 0.5f);
+                    createChannelGraph.Setting(channelSetting);
                     createChannelGraph.Draw();
                     
                     var eval = evalHandler.FindEvaluator();
