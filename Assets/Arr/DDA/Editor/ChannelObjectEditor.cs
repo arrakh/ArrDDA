@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Arr.DDA.Script;
 using UnityEditor;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Arr.DDA.Editor
     {
         private DDAGraph graph;
         private EvaluatorEditorHandler evalHandler;
+        private List<Vector2> points = new List<Vector2>();
         private ChannelObject Channel => target as ChannelObject;
 
         private int evalIndex;
@@ -32,14 +34,16 @@ namespace Arr.DDA.Editor
             if (graph == null) return;
             float progression = Channel.ProgressionMetric.Get().Value;
             float difficulty = Channel.DifficultyMetric.Get().Value;
-            graph.AddPoint(new Vector2(progression, difficulty));
+            var vec = new Vector2(progression, difficulty);
+            graph.AddPoint(vec, true);
+            points.Add(vec);
         }
 
         public override void OnInspectorGUI()
         {
             GUILayout.BeginVertical();
             
-            if (graph == null) graph = new DDAGraph(Channel.ChannelName);
+            if (graph == null) graph = new DDAGraph(Channel.ChannelName, points);
             if (evalHandler == null) evalHandler = new EvaluatorEditorHandler();
 
             if (!lastName.Equals(Channel.ChannelName))

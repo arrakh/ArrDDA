@@ -16,10 +16,10 @@ MonoBehaviour:
   DifficultyMetric: {fileID: 11400000, guid: 11732db87391f1e4a91185fca5835b61, type: 2}
   ProgressionMetric: {fileID: 11400000, guid: 5851b7e79a6a0b344978a705cb6f255d, type: 2}
   Setting:
-    AnxietyThreshold: 2
-    BoredomThreshold: 0
-    FlowOffset: 2.8
+    AnxietyThreshold: 5
+    BoredomThreshold: -1
+    FlowOffset: 1
     Width: 1
-    Slant: 0.125
-  Evaluator: Arr.DDA.Script.Evaluators.RestrainValue, Assembly-CSharp, Version=0.0.0.0,
+    Slant: 0.28
+  Evaluator: Arr.DDA.Script.Evaluators.AdaptValue, Assembly-CSharp, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null

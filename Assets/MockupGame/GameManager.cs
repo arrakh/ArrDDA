@@ -27,7 +27,7 @@ namespace MockupGame
 
         private List<Tile> tiles = new List<Tile>();
         private bool isPlaying = false;
-        private float maxTime = 20f;
+        private float maxTime = 5f;
         private int currentTile = 0;
 
         private void Start()
@@ -57,7 +57,7 @@ namespace MockupGame
 
         private void OnRoundOver(bool hasSucceded)
         {
-            Score.Add(1);
+            Score.Add(timeLeft / 5f);
             Parameter.isSuccess = hasSucceded;
             TargetChannel.Evaluate(Parameter);
             SizeChannel.Evaluate(Parameter);

@@ -28,12 +28,16 @@ namespace Arr.DDA.Editor
             public int lineGradientAmount;
         }
 
-        public DDAGraph(string name)
+        public DDAGraph(string name, List<Vector2> graphPoints = null)
         {
             this.name = name;
+
+            if (graphPoints == null) points = new List<Vector2>();
+            else foreach (var point in graphPoints)
+                    AddPoint(point);
+            
             centerText = new GUIStyle(GUI.skin.label)
                 {alignment = TextAnchor.MiddleCenter, fontSize = 18, fontStyle = FontStyle.Bold};
-            AddPoint(new Vector2(0f, 0f), false);
 
             upperboundFunction = x => (x * slant) + (upper * width) + offset;
             lowerboundFunction = x => (x * slant) - (lower * width) + offset;
@@ -90,18 +94,8 @@ namespace Arr.DDA.Editor
 
             DrawGradient();
 
-            if (points.Count > 0)
-            {
-                GUIChartEditor.PushLineChart(points.ToArray(), Color.cyan);
-
-                var point = points[points.Count - 1];
-
-                GUIChartEditor.PushPoint(point,
-                    point.y > upperboundFunction(point.x) ? Color.green :
-                    point.y < lowerboundFunction(point.x) ? Color.red : Color.yellow);
-
-                GUIChartEditor.PushValueLabel(point.y, point.x, point.y - (0.1f * relativeScale.y));
-            }
+            DrawLines();
+            
             DebugPointer();
             GUIChartEditor.EndChart();
 
@@ -129,6 +123,21 @@ namespace Arr.DDA.Editor
                 var color = new Color(1f, 0f, 0f, 1f - ((float)i / drawSetting.lineGradientAmount));
                 GUIChartEditor.PushFunction(x => lowerboundFunction(x) - (drawSetting.lineGradientDistance * mult * relativeScale.y), float.MinValue, float.MaxValue, color);
             }
+        }
+
+        private void DrawLines()
+        {
+            if (points.Count <= 0) return;
+            
+            GUIChartEditor.PushLineChart(points.ToArray(), Color.cyan);
+
+            var point = points[points.Count - 1];
+
+            GUIChartEditor.PushPoint(point,
+                point.y > upperboundFunction(point.x) ? Color.green :
+                point.y < lowerboundFunction(point.x) ? Color.red : Color.yellow);
+
+            GUIChartEditor.PushValueLabel(point.y, point.x, point.y - (0.1f * relativeScale.y));
         }
         
         private Vector2 pointer;
@@ -175,7 +184,7 @@ namespace Arr.DDA.Editor
             if (point.y < lowest.y) lowest.y = point.y;
 
             points.Add(point);
-            if (redraw) Draw();
+            if (redraw) DrawLines();
         }
 
         public void Setting(float upper, float lower, float width, float offset, float slant)

@@ -12,7 +12,7 @@ namespace Arr.DDA.Script.Evaluators
             float boredom = channel.GetBoredomThreshold(progression.Value);
             if (currentDiff > anxiety) currentDiff -= REGULATION_VALUE;
             else if (currentDiff < boredom ) currentDiff += REGULATION_VALUE;
-            Debug.Log($"Evaluating Restrain Value, Diff: {currentDiff}, Anx: {anxiety}, Bor: {boredom}, Cha: {difficulty.Value}, Ski: {progression.Value}");
+            //Debug.Log($"Evaluating Restrain Value, Diff: {currentDiff}, Anx: {anxiety}, Bor: {boredom}, Cha: {difficulty.Value}, Ski: {progression.Value}");
             return currentDiff;
         }
     }

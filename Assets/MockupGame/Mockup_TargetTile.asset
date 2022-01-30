@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2b186837be342a1a38b3e8777485e74, type: 3}
   m_Name: Mockup_TargetTile
   m_EditorClassIdentifier: 
-  DefaultValue: 3
+  DefaultValue: 2
   MinMaxValue: {x: 1, y: 100}
