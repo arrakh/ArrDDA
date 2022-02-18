@@ -1,8 +1,8 @@
-# ARR DDA (Dyanmic Difficulty Adjustment)
+# Arr DDA (Dyanmic Difficulty Adjustment) — The Smart Difficulty Adjustor
 
-## ARR DDA (Dynamic Difficulty Adjustment) are a tool for developers and game designers to help them create a game with smart AI that can adjust the game difficulty
+## __This plugin are created for educational purpose only__
 
-### **This plugin are created for educational purpose only**
+ARR DDA (Dynamic Difficulty Adjustment) are a tool for developers and game designers to help them create a game with smart AI that can adjust the game difficulty
 
 The purpose of this tool are :
 
