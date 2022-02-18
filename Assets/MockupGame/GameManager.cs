@@ -11,9 +11,6 @@ namespace MockupGame
 {
     public class GameManager : MonoBehaviour
     {
-        public MetricObject Score;
-        public MetricObject TargetTile;
-        public MetricObject TileSize;
         public ChannelObject TargetChannel;
         public ChannelObject SizeChannel;
 
@@ -35,7 +32,7 @@ namespace MockupGame
             TargetChannel.Initialize();
             SizeChannel.Initialize();
 
-            GenerateGrid((int)TileSize.Value);
+            GenerateGrid(SizeChannel.GetDifficultyRounded());
             timeLeft = maxTime;
             isPlaying = true;
         }
@@ -57,15 +54,15 @@ namespace MockupGame
 
         private void OnRoundOver(bool hasSucceded)
         {
-            Score.Add(timeLeft / 5f);
+            var newProgression = timeLeft / 5f;
             Parameter.isSuccess = hasSucceded;
-            TargetChannel.Evaluate(Parameter);
-            SizeChannel.Evaluate(Parameter);
+            TargetChannel.EvaluateWithParameter(newProgression, Parameter);
+            SizeChannel.EvaluateWithParameter(newProgression, Parameter);
             
             currentTile = 0;
             
             timeLeft = maxTime;
-            GenerateGrid((int)TileSize.Value);
+            GenerateGrid(SizeChannel.GetDifficultyRounded());
         }
 
         public void GenerateGrid(int size)
@@ -79,7 +76,7 @@ namespace MockupGame
                 tiles.Add(tile);
             }
 
-            for (int i = 0; i < (int)TargetTile.Value; i++)
+            for (int i = 0; i < TargetChannel.GetDifficultyRounded(); i++)
             {
                 Tile randTile;
 
@@ -109,7 +106,7 @@ namespace MockupGame
             {
                 tile.SetOn(false);
                 currentTile++;
-                if (currentTile >= (int)TargetTile.Value)
+                if (currentTile >= TargetChannel.GetDifficultyRounded())
                     OnRoundOver(true);
 
             }

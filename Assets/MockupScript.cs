@@ -24,7 +24,7 @@ public class MockupScript : MonoBehaviour
         
         Debug.Log($"Added Skill by {rand} with param success {parameter.isSuccess}");
         
-        channel.Evaluate(parameter);
+        //channel.Evaluate(parameter);
     }
 
     private IEnumerator Start()
