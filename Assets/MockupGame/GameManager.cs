@@ -29,9 +29,6 @@ namespace MockupGame
 
         private void Start()
         {
-            TargetChannel.Initialize();
-            SizeChannel.Initialize();
-
             GenerateGrid(SizeChannel.GetDifficultyRounded());
             timeLeft = maxTime;
             isPlaying = true;
