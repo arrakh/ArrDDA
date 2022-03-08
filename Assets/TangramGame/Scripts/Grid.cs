@@ -37,34 +37,47 @@ namespace TangramGame.Scripts
         {
             tile = null;
             
-            if (position.x < 0 || position.x > width) return false;
-            if (position.y < 0 || position.y > height) return false;
+            if (!IsInBounds(position)) return false;
 
             tile = tiles[position.x, position.y];
             return true;
         }
 
-        public bool TrySetPiece(TileContent content)
+        public void SetPiece(TileContent content, Vector2Int gridPosition)
         {
-            var allTiles = new HashSet<Tile>();
-            
-            //Try Get Origin
-            if (!TryGetTile(content.Origin, out var originTile)) return false;
-            if (originTile.CurrentContent != null) return false;
-            allTiles.Add(originTile);
+            tiles[gridPosition.x, gridPosition.y].CurrentContent = content;
 
             foreach (var offset in content.OffsetPieces)
             {
-                if (!TryGetTile(content.Origin + offset, out var tile)) return false;
-                if (tile.CurrentContent != null) return false;
-                allTiles.Add(tile);
+                var pos = offset + gridPosition;
+                tiles[pos.x, pos.y].CurrentContent = content;
             }
+        }
 
-            foreach (var tile in allTiles)
-                tile.CurrentContent = content;
+        public bool IsValidPlacement(TileContent content, Vector2Int position)
+        {
+            if (!IsInBounds(position)) return false;
+            if (HasContent(position)) return false;
 
+            foreach (var offset in content.OffsetPieces)
+            {
+                var pos = position + offset;
+                if (!IsInBounds(pos)) return false;
+                if (HasContent(pos)) return false;
+            }
+            
             return true;
         }
+
+        public bool IsInBounds(Vector2Int position)
+        {
+            if (position.x < 0 || position.x >= width) return false;
+            if (position.y < 0 || position.y >= height) return false;
+            return true;
+        }
+
+        public bool HasContent(Vector2Int position)
+            => tiles[position.x, position.y].CurrentContent != null;
 
     }
 }

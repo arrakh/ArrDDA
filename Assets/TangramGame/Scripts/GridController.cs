@@ -12,36 +12,6 @@ namespace TangramGame.Scripts
         private Grid grid;
         private int width, height;
 
-        private void Start()
-        {
-            CreateGrid(6, 6);
-
-            var square = new HashSet<Vector2Int>()
-            {
-                new Vector2Int(0, 1),
-                new Vector2Int(1, 0),
-                new Vector2Int(1, 1),
-            };
-            
-            var plus = new HashSet<Vector2Int>()
-            {
-                new Vector2Int(0, 1),
-                new Vector2Int(1, 0),
-                new Vector2Int(0, -1),
-                new Vector2Int(-1, 0),
-            };
-
-            var piece1 = new TileContent(Vector2Int.zero, square, Color.red);
-            var piece2 = new TileContent(Vector2Int.one * 3, square, Color.blue);
-            var piece3 = new TileContent(Vector2Int.one * 1, square, Color.blue);
-            var piece4 = new TileContent(Vector2Int.one * 2, plus, Color.green);
-            
-            PlacePiece(piece1);
-            PlacePiece(piece2);
-            PlacePiece(piece3);
-            PlacePiece(piece4);
-        }
-
         public void CreateGrid(int w, int h)
         {
             width = w;
@@ -51,17 +21,22 @@ namespace TangramGame.Scripts
 
         private void OnTileCreated(Tile t)
         {
-            var spawnPos = new Vector3(t.Position.x - width / 2f, t.Position.y - height / 2f);
-            var controller = Instantiate(tilePrefab.gameObject, spawnPos, Quaternion.identity, tileParent)
+            var controller = Instantiate(tilePrefab.gameObject, GridToWorldPos(t.Position), Quaternion.identity, tileParent)
                 .GetComponent<TileController>();
             
             controller.Setup(t);
         }
 
-        public void PlacePiece(TileContent content)
-        {
-            if (grid.TrySetPiece(content)) Debug.Log("Piece Set!");
-            else Debug.Log("Setting piece failed!");
-        }
+        public void PlacePiece(TileContent content, Vector2 worldPos)
+            => grid.SetPiece(content, WorldToGridPos(worldPos));
+
+        public bool IsValid(TileContent content, Vector2 worldPos)
+            => grid.IsValidPlacement(content, WorldToGridPos(worldPos));
+        
+        public Vector2Int WorldToGridPos(Vector2 worldPos)
+            => Vector2Int.RoundToInt(new Vector2(/*tileParent.position.x - */worldPos.x + width / 2f, /*tileParent.position.y - */worldPos.y + height / 2f));
+        
+        public Vector2 GridToWorldPos(Vector2Int gridPos)
+            => new Vector2(/*tileParent.position.x + */gridPos.x - width / 2f, /*tileParent.position.y + */gridPos.y - height / 2f);
     }
 }
