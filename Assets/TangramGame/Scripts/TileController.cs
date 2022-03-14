@@ -7,23 +7,30 @@ namespace TangramGame.Scripts
     public class TileController : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer sprite;
-        
-        private Tile tile;
+        [SerializeField] private Color normal, valid, invalid;
+
+        public Tile Tile { get; private set; }
 
         public void Setup(Tile t)
         {
-            this.tile = t;
-            tile.OnContentChanged += OnContentChanged;
+            this.Tile = t;
+            Tile.OnContentChanged += OnContentChanged;
         }
 
         private void OnDestroy()
         {
-            if (tile != null) tile.OnContentChanged -= OnContentChanged;
+            if (Tile != null) Tile.OnContentChanged -= OnContentChanged;
         }
 
         private void OnContentChanged(TileContent newContent)
         {
-            sprite.color = newContent.color;
+            
+        }
+
+        public void SetPreShow(bool isOn, bool isValid)
+        {
+            if (Tile.CurrentContent != null) return;
+            sprite.color = !isOn ? normal : isValid ? valid : invalid;
         }
     }
 }

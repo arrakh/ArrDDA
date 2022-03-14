@@ -16,7 +16,8 @@ namespace TangramGame.Scripts
 
         private List<TileContentElement> elements = new List<TileContentElement>();
         private Camera camera;
-        private Vector2 initPos;
+        
+        public Vector2 initPos;
         
         public TileContent Content { get; private set; }
 
@@ -46,7 +47,6 @@ namespace TangramGame.Scripts
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            Debug.Log("POINTER DOWN");
             initPos = transform.position;
             transform.position = camera.ScreenToWorldPoint(eventData.position);
             OnContentPicked?.Invoke(this);
@@ -54,7 +54,6 @@ namespace TangramGame.Scripts
 
         public void OnDrag(PointerEventData eventData)
         {
-            Debug.Log("DRAGGING");
             var finalPos = camera.ScreenToWorldPoint(eventData.position);
             finalPos.z = 0;
             transform.position = finalPos;

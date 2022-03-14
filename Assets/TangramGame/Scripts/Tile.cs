@@ -5,6 +5,24 @@ namespace TangramGame.Scripts
 {
     public class Tile
     {
+        protected bool Equals(Tile other)
+        {
+            return position.Equals(other.position);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Tile) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return position.GetHashCode();
+        }
+
         public Vector2Int Position
         {
             get => position;

@@ -7,17 +7,21 @@ namespace TangramGame.Scripts
     public class GameController : MonoBehaviour
     {
         [SerializeField] private GridController grid;
-        [SerializeField] private Transform spawnPos;
+        [SerializeField] private Transform plusPos, pShapePos;
         [SerializeField] private TileContentController contentPrefab;
+
+        private List<TileContentController> placedContents = new List<TileContentController>();
 
         private TileContent currentContent;
         private Vector2 lastPos;
         
-        static HashSet<Vector2Int> square = new HashSet<Vector2Int>()
+        static HashSet<Vector2Int> pShape = new HashSet<Vector2Int>()
         {
             new Vector2Int(0, 1),
             new Vector2Int(1, 0),
+            new Vector2Int(0, -1),
             new Vector2Int(1, 1),
+            new Vector2Int(2, 1),
         };
             
         static HashSet<Vector2Int> plus = new HashSet<Vector2Int>()
@@ -32,34 +36,50 @@ namespace TangramGame.Scripts
         {
             grid.CreateGrid(6, 5);
 
-            var content = new TileContent(plus, Color.blue);
-            
-            var tcc = Instantiate(contentPrefab.gameObject, spawnPos.position, Quaternion.identity)
+            var plusContent = new TileContent(plus, Color.blue);
+            var plusController = Instantiate(contentPrefab.gameObject, plusPos.position, Quaternion.identity)
                 .GetComponent<TileContentController>();
 
-            tcc.Setup(content, OnContentPicked, OnContentDropped, OnContentDragged);
+            var pShapeContent = new TileContent(pShape, Color.magenta);
+            var pShapeController = Instantiate(contentPrefab.gameObject, pShapePos.position, Quaternion.identity)
+                .GetComponent<TileContentController>();
+
+            plusController.Setup(plusContent, OnContentPicked, OnContentDropped, OnContentDragged);
+            pShapeController.Setup(pShapeContent, OnContentPicked, OnContentDropped, OnContentDragged);
         }
 
-        private void OnContentPicked(TileContentController obj) => currentContent = obj.Content;
+        private void OnContentPicked(TileContentController obj)
+        {
+            currentContent = obj.Content;
+            if (placedContents.Contains(obj))
+            {
+                placedContents.Remove(obj);
+                grid.RemovePiece(obj.transform.position);
+            }
+        }
 
         private void OnContentDropped(TileContentController obj)
         {
             currentContent = null;
-            obj.ResetPos();
+            
+            grid.ClearLastPreShows();
             if (!grid.IsValid(obj.Content, lastPos))
             {
+                obj.ResetPos();
                 return;
             }
             grid.PlacePiece(obj.Content, lastPos);
-            //obj.transform.position = (Vector2) Vector2Int.RoundToInt(lastPos);
+            var actualPos = grid.GridToWorldPos(grid.WorldToGridPos(lastPos));
+            obj.transform.position = actualPos;
+            obj.initPos = actualPos;
+            placedContents.Add(obj);
         }
 
         private void OnContentDragged(TileContentController obj, Vector2 pos)
         {
             lastPos = pos;
             
-            if(grid.IsValid(obj.Content, pos)) Debug.Log("<color=lime>Valid Placement!</color>");
-            else Debug.Log("<color=red>NOT VALID</color>");
+            grid.PreShowTile(obj.Content, pos);
         }
     }
 }
