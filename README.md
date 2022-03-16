@@ -26,8 +26,14 @@ The purpose of this tool are :
 In this example, you can use DDA on a tile based game. We can use tile size and score as a base for the DDA. Let's start by right clicking in the project folder and create 3 metrics, score metric, target tiles metric, and tile size metric
 
 ![Right clicking on project folder](/img/right_click.png)
+![Create score metric](/img/metric_score.png)
+![Create target tiles metric](/img/metric_targetsize.png)
+![Create tile size metric](/img/metric_tilesize.png)
 
 After that, we can create channels for both the target tiles and tile size. Start by right click on project folder and choose Channel
+
+![Create channel target tile](/img/channel_targettile.png)
+![Create channel tile size](/img/channel_tilesize.png)
 
 Create empty gameobjects and attach 'GameManager.cs' inside the gameobjects
 
@@ -192,6 +198,10 @@ namespace MockupGame
 ```
 
 Check on Channel scriptable objects to see how the game performs DDA live on your editor
+
+![Output Target Tile](/img/target_tile_output.png)
+![Output Tile Size](/img/tile_size_output.png)
+![Output Overall](/img/output.png)
 
 ## Contribution & License
 
