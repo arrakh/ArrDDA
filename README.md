@@ -26,11 +26,7 @@ The purpose of this tool are :
 In this example, you can use DDA on a tile based game. We can use tile size and score as a base for the DDA. Let's start by right clicking in the project folder and create 3 metrics, score metric, target tiles metric, and tile size metric
 
 ![Right clicking on project folder](/img/right_click.png)
-
-<p align="center">
-  <img src="https://github.com/arrakh/ArrDDA/img/metric_score.png?raw=true" alt="Create Score metric"/>
-</p>
-
+![Create score metric](/img/metric_score.png)
 ![Create target tiles metric](/img/metric_targetsize.png)
 ![Create tile size metric](/img/metric_tilesize.png)
 
