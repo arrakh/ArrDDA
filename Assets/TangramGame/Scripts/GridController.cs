@@ -50,11 +50,11 @@ namespace TangramGame.Scripts
 
             var contentToRemove = tileControllers[gridPos].Tile.CurrentContent;
 
-            var tiles = tileControllers.Where(x => x.Value.Tile.CurrentContent.Equals(contentToRemove));
-
-            foreach (var tile in tiles)
+            foreach (var tileController in tileControllers.Values)
             {
-                tile.Value.Tile.CurrentContent = null;
+                var toCheck = tileController.Tile.CurrentContent;
+                if (toCheck != null && toCheck.Equals(contentToRemove))
+                    tileController.Tile.CurrentContent = null;
             }
         }
 

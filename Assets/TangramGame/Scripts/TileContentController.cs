@@ -7,7 +7,7 @@ namespace TangramGame.Scripts
 {
     public class TileContentController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
-        [SerializeField] private SpriteRenderer sprite;
+        [SerializeField] private TileContentElement originElement;
         [SerializeField] private TileContentElement elementPrefab;
 
         private Action<TileContentController> OnContentPicked;
@@ -16,6 +16,7 @@ namespace TangramGame.Scripts
 
         private List<TileContentElement> elements = new List<TileContentElement>();
         private Camera camera;
+        private Vector3 pickedUpOffset;
         
         public Vector2 initPos;
         
@@ -29,7 +30,8 @@ namespace TangramGame.Scripts
             Content = tp;
             camera = Camera.main;
 
-            sprite.color = tp.color;
+            originElement.Setup(tp.color);
+            elements.Add(originElement);
 
             foreach (var offsetPiece in tp.OffsetPieces)
             {
@@ -48,13 +50,22 @@ namespace TangramGame.Scripts
         public void OnPointerDown(PointerEventData eventData)
         {
             initPos = transform.position;
-            transform.position = camera.ScreenToWorldPoint(eventData.position);
+
+            var worldPos = camera.ScreenToWorldPoint(eventData.position);
+            
+            pickedUpOffset = transform.position - worldPos;
+            var finalPos = worldPos + pickedUpOffset;
+            finalPos.z = 0;
+            transform.position = finalPos;
             OnContentPicked?.Invoke(this);
+
+            foreach (var element in elements)
+                element.BringToFront();
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            var finalPos = camera.ScreenToWorldPoint(eventData.position);
+            var finalPos = camera.ScreenToWorldPoint(eventData.position) + pickedUpOffset;
             finalPos.z = 0;
             transform.position = finalPos;
             OnContentDragged?.Invoke(this, transform.position);
@@ -63,6 +74,8 @@ namespace TangramGame.Scripts
         public void OnPointerUp(PointerEventData eventData)
         {
             OnContentDropped?.Invoke(this);
+            foreach (var element in elements)
+                element.ResetOrder();
         }
         
         public void ResetPos() => transform.position = initPos;
