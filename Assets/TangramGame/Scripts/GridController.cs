@@ -2,17 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace TangramGame.Scripts
 {
     public class GridController : MonoBehaviour
     {
+        public Vector3 GridWorldPos => tileParent.position;
+        public Grid Grid => grid;
+        
         [SerializeField] private TileController tilePrefab;
         [SerializeField] private Transform tileParent;
         
         private Grid grid;
         private int width, height;
-        private Dictionary<Vector2Int, TileController> tileControllers;
+        private Dictionary<Vector2Int, TileController> tileControllers = new Dictionary<Vector2Int, TileController>();
         private List<Vector2Int> lastPreShowPositions = new List<Vector2Int>();
         private Vector2Int lastPreShowGridPos = Vector2Int.one * 99999;
 
@@ -98,17 +102,15 @@ namespace TangramGame.Scripts
         
         public Vector2Int WorldToGridPos(Vector2 worldPos)
         {
-            var parentPos = tileParent.position;
-            var x = worldPos.x + width / 2f - parentPos.x;
-            var y = worldPos.y + height / 2f - parentPos.y;
+            var x = worldPos.x + width / 2f - GridWorldPos.x;
+            var y = worldPos.y + height / 2f - GridWorldPos.y;
             return Vector2Int.RoundToInt(new Vector2(x, y));
         }
         
         public Vector2 GridToWorldPos(Vector2Int gridPos)
         {
-            var parentPos = tileParent.position;
-            var x = parentPos.x + gridPos.x - width / 2f;
-            var y = parentPos.y + gridPos.y - height / 2f;
+            var x = GridWorldPos.x + gridPos.x - width / 2f;
+            var y = GridWorldPos.y + gridPos.y - height / 2f;
             return new Vector2(x, y);
         }
     }

@@ -5,7 +5,7 @@ namespace TangramGame.Scripts
 {
     public static class GridUtility
     {
-        public static Dictionary<Vector2Int, TileContent> GenerateRandomContent(int w, int h)
+        public static Dictionary<Vector2Int, TileContent> GenerateRandomContent(int w, int h, int minSize = 2, int maxSize = 5)
         {
             var contents = new Dictionary<Vector2Int, TileContent>();
             var tiles = new List<Vector2Int>(w * h);
@@ -21,13 +21,13 @@ namespace TangramGame.Scripts
 
             while (tiles.Count > 0)
             {
-                var generateCount = Random.Range(2, 5);           
+                var generateCount = Random.Range(minSize, maxSize);           
                 var randomIndex = Random.Range(0, tiles.Count);
                 var randomOriginTile = tiles[randomIndex];
                 tiles.RemoveAt(randomIndex);
                 generatedTiles.Add(randomOriginTile);
 
-                var newContent = new TileContent(new HashSet<Vector2Int>(), Random.ColorHSV(0, 1, 1f, 1f, 0.5f, 1f, 1f, 1f));
+                var newContent = new TileContent(new HashSet<Vector2Int>(), Random.ColorHSV(0, 1, 0.6f, 0.8f, 0.7f, 1f, 1f, 1f));
                 var pivots = new List<Vector2Int>();
                 pivots.Add(randomOriginTile);
                 

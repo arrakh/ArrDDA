@@ -7,6 +7,8 @@ namespace TangramGame.Scripts
 {
     public class TileContentController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
+        private static int LastOrder = 10;
+        
         [SerializeField] private TileContentElement originElement;
         [SerializeField] private TileContentElement elementPrefab;
 
@@ -19,6 +21,8 @@ namespace TangramGame.Scripts
         private Vector3 pickedUpOffset;
         
         public Vector2 initPos;
+
+        private int scaleAnimId = Int32.MaxValue;
         
         public TileContent Content { get; private set; }
 
@@ -29,8 +33,11 @@ namespace TangramGame.Scripts
         {
             Content = tp;
             camera = Camera.main;
+            
+            LastOrder++;
 
             originElement.Setup(tp.color);
+            originElement.SetOrder(LastOrder);
             elements.Add(originElement);
 
             foreach (var offsetPiece in tp.OffsetPieces)
@@ -38,6 +45,8 @@ namespace TangramGame.Scripts
                 var element = Instantiate(elementPrefab.gameObject, transform).GetComponent<TileContentElement>();
                 element.gameObject.transform.localPosition = (Vector2) offsetPiece;
                 element.Setup(tp.color);
+                element.SetOrder(LastOrder);
+                Debug.Log($"Setting Order to {LastOrder}");
                 
                 elements.Add(element);
             }
@@ -45,6 +54,14 @@ namespace TangramGame.Scripts
             if (onPicked != null) OnContentPicked += onPicked;
             if (onDropped != null) OnContentDropped += onDropped;
             if (onDragged != null) OnContentDragged += onDragged;
+        }
+
+        public void AnimateScale(float from, float to, float duration)
+        {
+            if (scaleAnimId != Int32.MaxValue) LeanTween.cancel(scaleAnimId);
+            
+            transform.localScale = Vector3.one * from;
+            scaleAnimId = gameObject.LeanScale(Vector3.one * to, duration).setEase(LeanTweenType.easeOutSine).id;
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -58,9 +75,11 @@ namespace TangramGame.Scripts
             finalPos.z = 0;
             transform.position = finalPos;
             OnContentPicked?.Invoke(this);
-
+            LastOrder++;
             foreach (var element in elements)
-                element.BringToFront();
+                element.SetOrder(LastOrder);
+            
+            transform.localScale = Vector3.one * 1.05f;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -74,10 +93,17 @@ namespace TangramGame.Scripts
         public void OnPointerUp(PointerEventData eventData)
         {
             OnContentDropped?.Invoke(this);
-            foreach (var element in elements)
-                element.ResetOrder();
+            /*foreach (var element in elements)
+                element.ResetOrder();*/
+            transform.localScale = Vector3.one;
         }
         
         public void ResetPos() => transform.position = initPos;
+
+        public void SetOrder(int order)
+        {
+            foreach (var element in elements)
+                element.SetOrder(order);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace TangramGame.Scripts
 {
     public class TileContentElement : MonoBehaviour
     {
+        
         [SerializeField] private SpriteRenderer sprite;
 
         private int originalOrder;
@@ -17,9 +18,9 @@ namespace TangramGame.Scripts
         public void Setup(Color color)
         {
             sprite.color = color;
+            Debug.Log($"Setup Content Element at {transform.position} with color {color}");
         }
 
-        public void BringToFront() => sprite.sortingOrder = 999;
-        public void ResetOrder() => sprite.sortingOrder = originalOrder;
+        public void SetOrder(int order) => sprite.sortingOrder = order;
     }
 }
