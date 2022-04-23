@@ -6,10 +6,10 @@ There are timer, block pieces and a grid inside of a level. Players need to fini
 
 Contents :
 
-* [Preparation and Initialization](##1-preparation-and-initialization)
-* [Scripted Game Objects](##2-scripted-game-objects)
-* [Additional Codes](##3-additional-codes)
-* [Testing](##4-testing)
+* [Preparation and Initialization](#preparation-and-initialization)
+* [Scripted Game Objects](#scripted-game-objects)
+* [Additional Codes](#additional-codes)
+* [Testing](#testing)
 
 ## Preparation and Initialization
 
