@@ -16,11 +16,11 @@ In this game, the mechanics tha can be dynamically adjusted are :
 
 Second, we need to create *Channel* and *Metric* parameters. These parameters are used to define values that we can control using ArrDDA and can be dynamically adjusted.
 
-<figure align="center" width="100%">
+<p align="center" width="100%">
     <img src="/img/right_click.png"
     width="40%"
     alt="Right clicking">
-</figure>
+</p>
 
 To create these parameters, Right click your empty area in the project section folder in unity and choose *Metrics* or *Channel* accordingly. In these example, these are the *Channel* and *Metric* parameters created :  
 
