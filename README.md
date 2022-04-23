@@ -31,4 +31,4 @@ Documentation for ArrDDA are right [here.](Documentation.md)
 
 ## Contribution & License
 
-Want to improve ArrDDA? Feel free to email or message me if you want to use this for commercial purposes. This content is released under the <http://opensource.org/licenses/MIT> MIT License.
+Want to improve ArrDDA? Feel free to email or message me if you want to use this for commercial purposes. This content is released under the [MIT License.] (<http://opensource.org/licenses/MIT>).
