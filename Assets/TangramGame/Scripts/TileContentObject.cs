@@ -5,16 +5,16 @@ using UnityEngine.EventSystems;
 
 namespace TangramGame.Scripts
 {
-    public class TileContentController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+    public class TileContentObject : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
         private static int LastOrder = 10;
         
         [SerializeField] private TileContentElement originElement;
         [SerializeField] private TileContentElement elementPrefab;
 
-        private Action<TileContentController> OnContentPicked;
-        private Action<TileContentController> OnContentDropped;
-        private Action<TileContentController, Vector2> OnContentDragged;
+        private Action<TileContentObject> OnContentPicked;
+        private Action<TileContentObject> OnContentDropped;
+        private Action<TileContentObject, Vector2> OnContentDragged;
 
         private List<TileContentElement> elements = new List<TileContentElement>();
         private Camera camera;
@@ -27,9 +27,9 @@ namespace TangramGame.Scripts
         public TileContent Content { get; private set; }
 
         public void Setup(TileContent tp, 
-            Action<TileContentController> onPicked = null, 
-            Action<TileContentController> onDropped = null, 
-            Action<TileContentController, Vector2> onDragged = null)
+            Action<TileContentObject> onPicked = null, 
+            Action<TileContentObject> onDropped = null, 
+            Action<TileContentObject, Vector2> onDragged = null)
         {
             Content = tp;
             camera = Camera.main;

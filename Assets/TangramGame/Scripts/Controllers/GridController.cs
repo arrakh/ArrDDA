@@ -11,12 +11,12 @@ namespace TangramGame.Scripts
         public Vector3 GridWorldPos => tileParent.position;
         public Grid Grid => grid;
         
-        [SerializeField] private TileController tilePrefab;
+        [SerializeField] private TileObject tilePrefab;
         [SerializeField] private Transform tileParent;
         
         private Grid grid;
         private int width, height;
-        private Dictionary<Vector2Int, TileController> tileControllers = new Dictionary<Vector2Int, TileController>();
+        private Dictionary<Vector2Int, TileObject> tileControllers = new Dictionary<Vector2Int, TileObject>();
         private List<Vector2Int> lastPreShowPositions = new List<Vector2Int>();
         private Vector2Int lastPreShowGridPos = Vector2Int.one * 99999;
 
@@ -30,7 +30,7 @@ namespace TangramGame.Scripts
         
         public void CreateGrid(int w, int h)
         {
-            tileControllers = new Dictionary<Vector2Int, TileController>(w * h);
+            tileControllers = new Dictionary<Vector2Int, TileObject>(w * h);
             
             width = w;
             height = h;
@@ -40,7 +40,7 @@ namespace TangramGame.Scripts
         private void OnTileCreated(Tile t)
         {
             var controller = Instantiate(tilePrefab.gameObject, GridToWorldPos(t.Position), Quaternion.identity, tileParent)
-                .GetComponent<TileController>();
+                .GetComponent<TileObject>();
             
             controller.Setup(t);
             
@@ -112,6 +112,15 @@ namespace TangramGame.Scripts
             var x = GridWorldPos.x + gridPos.x - width / 2f;
             var y = GridWorldPos.y + gridPos.y - height / 2f;
             return new Vector2(x, y);
+        }
+
+        public bool IsAllFilled()
+        {
+            foreach (var tile in tileControllers.Values)
+                if (tile.Tile.CurrentContent == null)
+                    return false;
+
+            return true;
         }
     }
 }

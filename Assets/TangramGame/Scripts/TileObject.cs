@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace TangramGame.Scripts
 {
-    public class TileController : MonoBehaviour
+    public class TileObject : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer sprite;
         [SerializeField] private Color normal, valid, invalid;

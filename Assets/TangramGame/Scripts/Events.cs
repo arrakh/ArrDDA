@@ -6,6 +6,6 @@ namespace TangramGame.Scripts
 {
     public static class Events
     {
-        
+        public static Action<GameTimer> OnNewGameTimer;
     }
 }

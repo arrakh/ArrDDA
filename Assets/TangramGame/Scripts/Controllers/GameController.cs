@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TangramGame.Scripts.Controllers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,35 +10,42 @@ namespace TangramGame.Scripts
     public class GameController : MonoBehaviour
     {
         [SerializeField] private GridController grid;
-        [SerializeField] private TileContentController contentPrefab;
+        [SerializeField] private TileContentObject contentPrefab;
         [SerializeField] private CameraController camera;
 
-        private List<TileContentController> placedContents = new List<TileContentController>();
-        private List<TileContentController> spawnedContents = new List<TileContentController>();
+        private List<TileContentObject> placedContents = new List<TileContentObject>();
+        private List<TileContentObject> spawnedContents = new List<TileContentObject>();
 
         private TileContent currentContent;
         private Vector2 lastPos;
 
+        private GameTimer currentTimer;
+        private bool shouldUpdateTimer = false;
+
         public void Start()
         {
-            GenerateGame(new GameSettings(Random.Range(3, 6), Random.Range(3, 6), 10f));
+            GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
+            
+            
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
-                GenerateGame(new GameSettings(Random.Range(3, 6), Random.Range(3, 6), 10f));
+                GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
+            
+            if (shouldUpdateTimer) currentTimer.Update(Time.deltaTime);
         }
 
-        public void GenerateGame(GameSettings gameSettings)
+        public void GenerateGame(GameDifficulty gameDifficulty)
         {
             ClearGame();
             
-            var w = gameSettings.width;
-            var h = gameSettings.height;
+            var w = gameDifficulty.width;
+            var h = gameDifficulty.height;
             grid.CreateGrid(w, h);
             
-            var patterns = GridUtility.GenerateRandomContent(w, h, gameSettings.minPieceSieze, gameSettings.maxPieceSize);
+            var patterns = GridUtility.GenerateRandomContent(w, h, gameDifficulty.minPieceSize, gameDifficulty.maxPieceSize);
             var placementOffset = Mathf.Max(w, h);
 
             float delay = 0f;
@@ -48,7 +56,7 @@ namespace TangramGame.Scripts
                 var oval = new Vector2(circle.x / 1.8f, circle.y);
                 var pos = oval * placementOffset /2f;
                 var controller = Instantiate(contentPrefab.gameObject, pos, Quaternion.identity)
-                    .GetComponent<TileContentController>();
+                    .GetComponent<TileContentObject>();
                 
                 controller.Setup(pattern.Value, OnContentPicked, OnContentDropped, OnContentDragged);
                 controller.transform.localScale = Vector3.zero;
@@ -59,6 +67,15 @@ namespace TangramGame.Scripts
             }
             
             camera.MoveToGrid(grid);
+
+            currentTimer = new GameTimer(gameDifficulty.roundTime);
+            currentTimer.OnTimerEnd.AddListener(OnTimerEnded);
+            shouldUpdateTimer = true;
+        }
+
+        public void OnTimerEnded()
+        {
+            shouldUpdateTimer = false;
         }
 
         public void ClearGame()
@@ -71,7 +88,15 @@ namespace TangramGame.Scripts
             placedContents.Clear();
         }
 
-        private void OnContentPicked(TileContentController obj)
+        private void CheckForWin()
+        {
+            if (grid.IsAllFilled())
+            {
+                GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
+            }
+        }
+
+        private void OnContentPicked(TileContentObject obj)
         {
             currentContent = obj.Content;
             if (placedContents.Contains(obj))
@@ -81,7 +106,7 @@ namespace TangramGame.Scripts
             }
         }
 
-        private void OnContentDropped(TileContentController obj)
+        private void OnContentDropped(TileContentObject obj)
         {
             currentContent = null;
             
@@ -97,9 +122,11 @@ namespace TangramGame.Scripts
             obj.initPos = actualPos;
             obj.SetOrder(0);
             placedContents.Add(obj);
+
+            CheckForWin();
         }
 
-        private void OnContentDragged(TileContentController obj, Vector2 pos)
+        private void OnContentDragged(TileContentObject obj, Vector2 pos)
         {
             lastPos = pos;
             

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TangramGame.Scripts
+namespace TangramGame.Scripts.Controllers
 {
     public class CameraController : MonoBehaviour
     {
