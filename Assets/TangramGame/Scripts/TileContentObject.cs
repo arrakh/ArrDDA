@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace TangramGame.Scripts
 {
-    public class TileContentObject : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+    public class TileContentObject : MonoBehaviour, IInteractable
     {
         private static int LastOrder = 10;
         
@@ -64,33 +64,33 @@ namespace TangramGame.Scripts
             scaleAnimId = gameObject.LeanScale(Vector3.one * to, duration).setEase(LeanTweenType.easeOutSine).id;
         }
 
-        public void OnPointerDown(PointerEventData eventData)
+        public Transform Transform => transform;
+
+        public void OnGrab(Vector2 worldPosition)
         {
             initPos = transform.position;
 
-            var worldPos = camera.ScreenToWorldPoint(eventData.position);
-            
+            var worldPos = new Vector3(worldPosition.x, worldPosition.y, 0);
             pickedUpOffset = transform.position - worldPos;
             var finalPos = worldPos + pickedUpOffset;
             finalPos.z = 0;
             transform.position = finalPos;
             OnContentPicked?.Invoke(this);
             LastOrder++;
-            foreach (var element in elements)
-                element.SetOrder(LastOrder);
+            SetOrder(LastOrder);
             
             transform.localScale = Vector3.one * 1.05f;
         }
 
-        public void OnDrag(PointerEventData eventData)
+        public void OnDrag(Vector2 worldPosition)
         {
-            var finalPos = camera.ScreenToWorldPoint(eventData.position) + pickedUpOffset;
+            var finalPos = new Vector3(worldPosition.x, worldPosition.y, 0) + pickedUpOffset;
             finalPos.z = 0;
             transform.position = finalPos;
             OnContentDragged?.Invoke(this, transform.position);
         }
 
-        public void OnPointerUp(PointerEventData eventData)
+        public void OnDrop(Vector2 worldPosition)
         {
             OnContentDropped?.Invoke(this);
             /*foreach (var element in elements)

@@ -71,11 +71,14 @@ namespace TangramGame.Scripts
             currentTimer = new GameTimer(gameDifficulty.roundTime);
             currentTimer.OnTimerEnd.AddListener(OnTimerEnded);
             shouldUpdateTimer = true;
+            
+            Events.OnNewGameTimer?.Invoke(currentTimer);
         }
 
         public void OnTimerEnded()
         {
             shouldUpdateTimer = false;
+            //GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
         }
 
         public void ClearGame()
