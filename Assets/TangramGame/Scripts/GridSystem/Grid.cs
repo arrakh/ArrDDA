@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace TangramGame.Scripts
+namespace TangramGame.Scripts.GridSystem
 {
     public class Grid
     {

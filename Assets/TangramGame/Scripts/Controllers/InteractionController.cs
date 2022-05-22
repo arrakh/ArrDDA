@@ -11,12 +11,21 @@ namespace TangramGame.Scripts.Controllers
 
         private bool shouldDrag;
 
+        private void OnEnable() => Events.OnPreRoundOver += OnPreRoundOver;
+        private void OnDisable() => Events.OnPreRoundOver -= OnPreRoundOver;
+
+        private void OnPreRoundOver()
+        {
+            current = null;
+            shouldDrag = false;
+        }
+
         private void Update()
         {
             if (shouldDrag)
             {
                 var worldPos = camera.ScreenToWorldPoint(Input.mousePosition);
-                current.OnDrag(worldPos); 
+                current.OnDrag(worldPos);
             }
             
             if (Input.GetMouseButtonDown(0))

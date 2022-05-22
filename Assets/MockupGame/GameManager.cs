@@ -48,13 +48,13 @@ namespace MockupGame
 
             if (timeLeft < 0) OnRoundOver(false);
         }
-
+ 
         private void OnRoundOver(bool hasSucceded)
         {
             var newProgression = timeLeft / 5f;
             Parameter.isSuccess = hasSucceded;
-            TargetChannel.EvaluateWithParameter(newProgression, Parameter);
-            SizeChannel.EvaluateWithParameter(newProgression, Parameter);
+            TargetChannel.EvaluateDelta(newProgression, Parameter);
+            SizeChannel.EvaluateDelta(newProgression, Parameter);
             
             currentTile = 0;
             

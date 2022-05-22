@@ -8,6 +8,7 @@ namespace Arr.DDA.Script
         public float OnInternalEvaluate(Metric difficulty, Metric progression, ChannelSetting channel, EvaluationParameter parameter)
         {
             if (parameter is T param) return OnEvaluate(difficulty, progression, channel, param);
+            else if (parameter == null) return OnEvaluate(difficulty, progression, channel, null);
             else throw new Exception($"This evaluator param is NOT type of {typeof(T)}");
         }
 

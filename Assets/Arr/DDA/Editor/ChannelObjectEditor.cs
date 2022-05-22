@@ -32,6 +32,7 @@ namespace Arr.DDA.Editor
         private void OnEvaluated(float obj)
         {
             if (graph == null) return;
+            Debug.Log($"Evaluated to {obj}");
             float progression = Channel.ProgressionMetric.Get().Value;
             float difficulty = Channel.DifficultyMetric.Get().Value;
             var vec = new Vector2(progression, difficulty);

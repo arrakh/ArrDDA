@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TangramGame.Scripts.GridSystem;
 using UnityEngine;
+using Grid = TangramGame.Scripts.GridSystem.Grid;
 using Random = UnityEngine.Random;
 
 namespace TangramGame.Scripts

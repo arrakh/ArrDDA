@@ -25,6 +25,11 @@ namespace Arr.DDA.Script
             set => channel = value;
         }
 
+        private void OnEnable()
+        {
+            Initialize();
+        }
+
         public void Initialize()
         {
             DifficultyMetric.CreateMetric();
@@ -38,28 +43,16 @@ namespace Arr.DDA.Script
             Debug.Log($"Created Channel for {ChannelName} with Evaluator {eval.GetType()}");
         }
 
-        public float Evaluate(float newProgression)
+        public float Evaluate(float newProgression, EvaluationParameter param = null)
         { 
             ProgressionMetric.Set(newProgression);
-            return Channel.Evaluate(null);
+            return Evaluate(param);
         }
         
-        public float EvaluateDelta(float deltaProgression)
+        public float EvaluateDelta(float deltaProgression, EvaluationParameter param = null)
         { 
             ProgressionMetric.Add(deltaProgression);
-            return Channel.Evaluate(null);
-        }
-        
-        public float EvaluateWithParameter(float deltaProgression, EvaluationParameter parameter)
-        { 
-            ProgressionMetric.Set(deltaProgression);
-            return Channel.Evaluate(parameter);
-        }
-        
-        public float EvaluateDeltaWithParameter(float newProgression, EvaluationParameter parameter)
-        { 
-            ProgressionMetric.Set(newProgression);
-            return Channel.Evaluate(parameter);
+            return Evaluate(param);
         }
 
         public float GetDifficulty() => DifficultyMetric.Value;
@@ -68,10 +61,11 @@ namespace Arr.DDA.Script
         public int GetDifficultyFloored() => Mathf.FloorToInt(DifficultyMetric.Value);
         public int GetDifficultyCeiled() => Mathf.CeilToInt(DifficultyMetric.Value);
 
-        public float Evaluate()
+        public float Evaluate(EvaluationParameter param = null)
         {
-            var param = new EvaluationParameter();
-            return Channel.Evaluate(param);
+            var diff = Channel.Evaluate(param);
+            OnEvaluated?.Invoke(diff);
+            return diff;
         }
 
     }

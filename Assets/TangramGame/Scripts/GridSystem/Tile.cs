@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace TangramGame.Scripts
+namespace TangramGame.Scripts.GridSystem
 {
     public class Tile
     {

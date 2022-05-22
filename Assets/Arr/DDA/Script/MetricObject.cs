@@ -33,7 +33,7 @@ namespace Arr.DDA
         }
 
 
-        public void Set(float value) => metric.SetValue(value);
-        public void Add(float delta) => metric.SetValue(metric.Value + delta);
+        public void Set(float value) => Get().SetValue(value);
+        public void Add(float delta) => Get().SetValue(metric.Value + delta);
     }
 }

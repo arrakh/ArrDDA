@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TangramGame.Scripts.GridSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -46,7 +47,6 @@ namespace TangramGame.Scripts
                 element.gameObject.transform.localPosition = (Vector2) offsetPiece;
                 element.Setup(tp.color);
                 element.SetOrder(LastOrder);
-                Debug.Log($"Setting Order to {LastOrder}");
                 
                 elements.Add(element);
             }
@@ -54,6 +54,13 @@ namespace TangramGame.Scripts
             if (onPicked != null) OnContentPicked += onPicked;
             if (onDropped != null) OnContentDropped += onDropped;
             if (onDragged != null) OnContentDragged += onDragged;
+        }
+
+        public void OnDestroy()
+        {
+            OnContentPicked = null;
+            OnContentDropped = null;
+            OnContentDragged = null;
         }
 
         public void AnimateScale(float from, float to, float duration)

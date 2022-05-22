@@ -1,10 +1,7 @@
-using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
-namespace TangramGame.Scripts
+namespace TangramGame.Scripts.UI
 {
     public class GameTimerUI : MonoBehaviour
     {

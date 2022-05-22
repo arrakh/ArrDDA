@@ -20,7 +20,7 @@ namespace Arr.DDA.Script.Evaluators
                 if (parameter.isSuccess)
                 {
                     diff += REGULATION_VALUE * SMALL_MOD;
-                    channel.AnxietyThreshold += REGULATION_VALUE;
+                    channel.AnxietyThreshold = Mathf.Clamp(channel.AnxietyThreshold += REGULATION_VALUE, -channel.BoredomThreshold, float.MaxValue);
                 }
                 else diff -= REGULATION_VALUE * LARGE_MOD;
             }
@@ -31,7 +31,7 @@ namespace Arr.DDA.Script.Evaluators
                 else
                 {
                     diff -= REGULATION_VALUE * SMALL_MOD;
-                    channel.BoredomThreshold -= REGULATION_VALUE;
+                    channel.BoredomThreshold = Mathf.Clamp(channel.BoredomThreshold - REGULATION_VALUE, -channel.AnxietyThreshold, float.MaxValue);
                     Debug.Log($"{diff} -= {REGULATION_VALUE} * {SMALL_MOD} = {diff -= REGULATION_VALUE * SMALL_MOD}");
                 }
             }
@@ -45,5 +45,14 @@ namespace Arr.DDA.Script.Evaluators
     public class AdaptParameter : EvaluationParameter
     {
         public bool isSuccess;
+
+        public AdaptParameter(bool isSuccess)
+        {
+            this.isSuccess = isSuccess;
+        }
+
+        public AdaptParameter()
+        {
+        }
     }
 }

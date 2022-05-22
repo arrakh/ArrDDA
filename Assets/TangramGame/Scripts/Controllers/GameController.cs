@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TangramGame.Scripts.Controllers;
+using TangramGame.Scripts.GridSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,27 +19,35 @@ namespace TangramGame.Scripts
 
         private TileContent currentContent;
         private Vector2 lastPos;
+        private GameDifficulty lastDifficulty;
 
         private GameTimer currentTimer;
         private bool shouldUpdateTimer = false;
 
-        public void Start()
+        private void OnEnable()
         {
-            GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
-            
-            
+            Events.OnHealthChanged += OnHealthChanged;
+        }
+
+        private void OnDisable()
+        {
+            Events.OnHealthChanged -= OnHealthChanged;
+        }
+
+        private void OnHealthChanged(int newHealth)
+        {
+            if (newHealth <= 0) OnGameOver();
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-                GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
-            
             if (shouldUpdateTimer) currentTimer.Update(Time.deltaTime);
         }
 
         public void GenerateGame(GameDifficulty gameDifficulty)
         {
+            lastDifficulty = gameDifficulty;
+            
             ClearGame();
             
             var w = gameDifficulty.width;
@@ -78,7 +87,7 @@ namespace TangramGame.Scripts
         public void OnTimerEnded()
         {
             shouldUpdateTimer = false;
-            //GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
+            EndRound(new RoundResult(false, lastDifficulty));
         }
 
         public void ClearGame()
@@ -93,10 +102,18 @@ namespace TangramGame.Scripts
 
         private void CheckForWin()
         {
-            if (grid.IsAllFilled())
-            {
-                GenerateGame(new GameDifficulty(Random.Range(3, 6), Random.Range(3, 6), 10f));
-            }
+            if (grid.IsAllFilled()) EndRound(new RoundResult(true, lastDifficulty));
+        }
+
+        private void EndRound(RoundResult result)
+        {
+            Events.OnPreRoundOver?.Invoke();
+            Events.OnRoundCompleted?.Invoke(result);
+        }
+
+        private void OnGameOver()
+        {
+            Events.OnGameOver?.Invoke();
         }
 
         private void OnContentPicked(TileContentObject obj)

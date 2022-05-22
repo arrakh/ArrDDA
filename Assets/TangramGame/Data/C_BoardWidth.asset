@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953138926a114d7f8724d7abd4bcca90, type: 3}
+  m_Name: C_BoardWidth
+  m_EditorClassIdentifier: 
+  ChannelName: Board Width
+  DifficultyMetric: {fileID: 11400000, guid: 28d8b1d753c371c4d9cb81c92e133e2f, type: 2}
+  ProgressionMetric: {fileID: 11400000, guid: 84508837423635343a9b2dd135e001ca, type: 2}
+  Setting:
+    AnxietyThreshold: 1
+    BoredomThreshold: 1
+    FlowOffset: 2
+    Width: 1.5
+    Slant: 0.2
+  Evaluator: Arr.DDA.Script.Evaluators.AdaptValue, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null

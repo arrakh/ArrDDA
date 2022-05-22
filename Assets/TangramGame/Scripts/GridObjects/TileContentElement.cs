@@ -18,7 +18,6 @@ namespace TangramGame.Scripts
         public void Setup(Color color)
         {
             sprite.color = color;
-            Debug.Log($"Setup Content Element at {transform.position} with color {color}");
         }
 
         public void SetOrder(int order) => sprite.sortingOrder = order;
