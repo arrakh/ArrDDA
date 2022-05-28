@@ -38,6 +38,7 @@ namespace TangramGame.Scripts
             LastOrder++;
 
             originElement.Setup(tp.color);
+            SetZ(LastOrder);
             originElement.SetOrder(LastOrder);
             elements.Add(originElement);
 
@@ -77,7 +78,7 @@ namespace TangramGame.Scripts
         {
             initPos = transform.position;
 
-            var worldPos = new Vector3(worldPosition.x, worldPosition.y, 0);
+            var worldPos = new Vector3(worldPosition.x, worldPosition.y, LastOrder / 100f);
             pickedUpOffset = transform.position - worldPos;
             var finalPos = worldPos + pickedUpOffset;
             finalPos.z = 0;
@@ -91,7 +92,7 @@ namespace TangramGame.Scripts
 
         public void OnDrag(Vector2 worldPosition)
         {
-            var finalPos = new Vector3(worldPosition.x, worldPosition.y, 0) + pickedUpOffset;
+            var finalPos = new Vector3(worldPosition.x, worldPosition.y, LastOrder / 100f) + pickedUpOffset;
             finalPos.z = 0;
             transform.position = finalPos;
             OnContentDragged?.Invoke(this, transform.position);
@@ -109,8 +110,11 @@ namespace TangramGame.Scripts
 
         public void SetOrder(int order)
         {
+            SetZ(order);
             foreach (var element in elements)
                 element.SetOrder(order);
         }
+        
+        public void SetZ(int order) => transform.position = new Vector3(transform.position.x, transform.position.y, order / 100f);
     }
 }

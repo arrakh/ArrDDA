@@ -38,7 +38,16 @@ namespace TangramGame.Scripts.Controllers
                 }
                 
                 var worldPos = camera.ScreenToWorldPoint(Input.mousePosition);
-                var hit = Physics2D.Raycast(worldPos, Vector2.zero);
+                var hits = Physics2D.RaycastAll(worldPos, Vector2.zero);
+                RaycastHit2D hit = new RaycastHit2D();
+
+                foreach (var h in hits)
+                {
+                    if (hit.collider == null) hit = h;
+                    else if (h.collider.transform.position.z > hit.collider.transform.position.z) hit = h;
+                    Debug.Log($"{h.transform.name}: {h.collider.transform.position.z} > {hit.collider.transform.position.z}", h.transform.gameObject);
+                }
+                
                 if (hit.collider != null && hit.collider.TryGetComponent<IInteractable>(out var interactable))
                 {
                     current = interactable;
