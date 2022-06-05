@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Arr.DDA.Script;
 using Syrus.Plugins.ChartEditor;
 using UnityEditor;
 using UnityEngine;
@@ -187,6 +188,21 @@ namespace Arr.DDA.Editor
             if (redraw) DrawLines();
         }
 
+        public void SetPoints(List<Vector2> points)
+        {
+            this.points = points;
+
+            foreach (var point in points)
+            {
+                if (point.x > highest.x) highest.x = point.x;
+                if (point.y > highest.y) highest.y = point.y;
+                if (point.x < lowest.x) lowest.x = point.x;
+                if (point.y < lowest.y) lowest.y = point.y;
+            }
+            
+            DrawLines();
+        }
+
         public void Setting(float upper, float lower, float width, float offset, float slant)
         {
             this.upper = upper;
@@ -196,13 +212,15 @@ namespace Arr.DDA.Editor
             this.slant = slant;
         }
 
-        public void Setting(ChannelSetting setting)
+        public void Setting(ChannelData setting)
         {
-            upper = setting.AnxietyThreshold;
-            lower = setting.BoredomThreshold;
-            width = setting.Width;
-            offset = setting.FlowOffset;
-            slant = setting.Slant;
+            upper = setting.anxietyThreshold;
+            lower = setting.boredomThreshold;
+            width = setting.width;
+            offset = setting.flowOffset;
+            slant = setting.slant;
+            pointer.x = setting.currentProgression;
+            pointer.y = setting.currentDifficulty;
         }
     }
 }

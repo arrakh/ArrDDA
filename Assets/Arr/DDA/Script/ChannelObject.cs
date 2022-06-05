@@ -3,70 +3,42 @@ using UnityEngine;
 
 namespace Arr.DDA.Script
 {
-    [CreateAssetMenu(fileName = "New Channel", menuName = ProjectConst.PROJECT_NAME + "/Channel", order = 0)]
-    public class ChannelObject : ScriptableObject
+    public abstract class ChannelObject : ScriptableObject
     {
-        public Action<float> OnEvaluated;
-        public string ChannelName = "";
-        public MetricObject DifficultyMetric;
-        public MetricObject ProgressionMetric;
-        public ChannelSetting Setting;
-        [HideInInspector] public string Evaluator;
+        [SerializeField] protected ChannelData startingData = ChannelData.Default;
 
-        private Channel channel = null;
+        private bool initialized = false;
+        private Guid channelId = Guid.Empty;
+        private ChannelData currentData;
 
-        public Channel Channel
-        {
-            get
-            {
-                if(channel == null) Initialize();
-                return channel;
-            }
-            set => channel = value;
-        }
-
-        private void OnEnable()
-        {
-            Initialize();
-        }
+        public Guid Id => channelId;
+        public ChannelData Data => initialized ? currentData : startingData;
 
         public void Initialize()
         {
-            DifficultyMetric.CreateMetric();
-            ProgressionMetric.CreateMetric();
+            if (initialized)
+                throw new Exception($"You are trying to Initialize {name} while it is already initialized!");
+
+            channelId = Guid.NewGuid();
+            currentData = startingData;
             
-            var evalType = Type.GetType(Evaluator);
-            if (evalType == null) throw new Exception($"No Evaluator found with type {Evaluator}!");
-            IEvaluator eval = Activator.CreateInstance(evalType) as IEvaluator;
-            Channel = new Channel(ChannelName, eval, DifficultyMetric.Get(), ProgressionMetric.Get(), Setting);
-            Channel.OnEvaluated = OnEvaluated;
-            Debug.Log($"Created Channel for {ChannelName} with Evaluator {eval.GetType()}");
+            DynamicDifficulty.Initialize(channelId, currentData, GetEvaluator());
         }
 
-        public float Evaluate(float newProgression, EvaluationParameter param = null)
-        { 
-            ProgressionMetric.Set(newProgression);
-            return Evaluate(param);
-        }
-        
-        public float EvaluateDelta(float deltaProgression, EvaluationParameter param = null)
-        { 
-            ProgressionMetric.Add(deltaProgression);
-            return Evaluate(param);
-        }
+        protected virtual IEvaluator GetEvaluator() => null;
 
-        public float GetDifficulty() => DifficultyMetric.Value;
-
-        public int GetDifficultyRounded() => Mathf.RoundToInt(DifficultyMetric.Value);
-        public int GetDifficultyFloored() => Mathf.FloorToInt(DifficultyMetric.Value);
-        public int GetDifficultyCeiled() => Mathf.CeilToInt(DifficultyMetric.Value);
-
-        public float Evaluate(EvaluationParameter param = null)
+        public virtual float Evaluate(float newProgression, bool record = true)
         {
-            var diff = Channel.Evaluate(param);
-            OnEvaluated?.Invoke(diff);
-            return diff;
+            currentData = DynamicDifficulty.Evaluate(channelId, newProgression, record);
+            return currentData.currentDifficulty;
         }
 
+        protected virtual float Evaluate<T>(float newProgression, T parameter, bool record = true)
+        {
+            currentData = DynamicDifficulty.Evaluate(channelId, newProgression, parameter, record);
+            return currentData.currentDifficulty;
+        }
+
+        public float Difficulty => currentData.currentDifficulty;
     }
 }

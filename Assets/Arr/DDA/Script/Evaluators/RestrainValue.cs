@@ -2,18 +2,27 @@ using UnityEngine;
 
 namespace Arr.DDA.Script.Evaluators
 {
-    public class RestrainValue : Evaluator<EvaluationParameter>
+    public class RestrainValue : IEvaluator
     {
-        private const float REGULATION_VALUE = 1;
-        public override float OnEvaluate(Metric difficulty, Metric progression, ChannelSetting channel, EvaluationParameter parameter)
+        private float regulationValue = 1f;
+
+        public RestrainValue(float regulationValue)
         {
-            float currentDiff = difficulty.Value;
-            float anxiety = channel.GetAnxietyThreshold(progression.Value);
-            float boredom = channel.GetBoredomThreshold(progression.Value);
-            if (currentDiff > anxiety) currentDiff -= REGULATION_VALUE;
-            else if (currentDiff < boredom ) currentDiff += REGULATION_VALUE;
-            Debug.Log($"Evaluating Restrain Value, Diff: {currentDiff}, Anx: {anxiety}, Bor: {boredom}, Cha: {difficulty.Value}, Ski: {progression.Value}");
-            return currentDiff;
+            this.regulationValue = regulationValue;
+        }
+
+        public RestrainValue() { }
+
+        public ChannelData Evaluate(ChannelData data)
+        {
+            float diff = data.currentDifficulty;
+            float anxiety = data.GetAnxietyThreshold();
+            float boredom = data.GetBoredomThreshold();
+            if (diff > anxiety) diff -= regulationValue;
+            else if (diff < boredom ) diff += regulationValue;
+            //Debug.Log($"Evaluating Restrain Value, Diff: {diff}, Anx: {anxiety}, Bor: {boredom}");
+            data.currentDifficulty = diff;
+            return data;
         }
     }
 }

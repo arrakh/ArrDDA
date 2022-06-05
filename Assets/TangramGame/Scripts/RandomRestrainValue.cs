@@ -4,20 +4,28 @@ using UnityEngine;
 
 namespace TangramGame.Scripts
 {
-    public class RandomRestrainValue : Evaluator<EvaluationParameter>
+    public class RandomRestrainValue : IEvaluator
     {
-        private const float REGULATION_VALUE_MIN = 0.5f;
-        private const float REGULATION_VALUE_MAX = 1.5f;
-        public override float OnEvaluate(Metric difficulty, Metric progression, ChannelSetting channel, EvaluationParameter parameter)
+        private float minRegulationValue = 0.5f;
+        private float maxRegulationValue = 1.5f;
+        
+        public RandomRestrainValue(float minRegulationValue, float maxRegulationValue)
         {
-            float currentDiff = difficulty.Value;
-            float anxiety = channel.GetAnxietyThreshold(progression.Value);
-            float boredom = channel.GetBoredomThreshold(progression.Value);
-            var rand = Random.Range(REGULATION_VALUE_MIN, REGULATION_VALUE_MAX);
-            if (currentDiff > anxiety) currentDiff -= rand;
-            else if (currentDiff < boredom ) currentDiff += rand;
-            Debug.Log($"Evaluating Restrain Value, Diff: {currentDiff}, Anx: {anxiety}, Bor: {boredom}, Cha: {difficulty.Value}, Ski: {progression.Value}");
-            return currentDiff;
+            this.minRegulationValue = minRegulationValue;
+            this.maxRegulationValue = maxRegulationValue;
+        }
+
+        public ChannelData Evaluate(ChannelData data)
+        {
+            float diff = data.currentDifficulty;
+            float anxiety = data.GetAnxietyThreshold();
+            float boredom = data.GetBoredomThreshold();
+            var rand = Random.Range(minRegulationValue, maxRegulationValue);
+            if (diff > anxiety) diff -= rand;
+            else if (diff < boredom ) diff += rand;
+            //Debug.Log($"Evaluating Restrain Value, Diff: {diff}, Anx: {anxiety}, Bor: {boredom}");
+            data.currentDifficulty = diff;
+            return data;
         }
     }
 }

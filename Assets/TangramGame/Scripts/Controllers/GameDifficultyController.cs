@@ -9,11 +9,17 @@ namespace TangramGame.Scripts
     public class GameDifficultyController : MonoBehaviour
     {
         [SerializeField] private GameController gameController;
-        [SerializeField] private ChannelObject boardWidthChannel;
-        [SerializeField] private ChannelObject boardHeightChannel;
-        [SerializeField] private ChannelObject roundTimerChannel;
+        [SerializeField] private AdaptValueChannel boardWidthChannel;
+        [SerializeField] private AdaptValueChannel boardHeightChannel;
 
-        private void Start() => gameController.GenerateGame(GetDifficulty());
+        private int currentRound = 0;
+
+        private void Start()
+        {
+            boardHeightChannel.Initialize();
+            boardWidthChannel.Initialize();
+            gameController.GenerateGame(GetDifficulty());
+        }
 
         private void OnEnable() => Events.OnRoundCompleted += OnRoundCompleted;
         private void OnDisable() => Events.OnRoundCompleted -= OnRoundCompleted;
@@ -21,11 +27,11 @@ namespace TangramGame.Scripts
         private void OnRoundCompleted(RoundResult result)
         {
             //Evaluate difficulty here based on previous result
-
+            currentRound++;
             var param = new AdaptParameter(result.isWin);
-            boardWidthChannel.EvaluateDelta(1f, param);
-            boardHeightChannel.EvaluateDelta(1f, param);
-            roundTimerChannel.EvaluateDelta(1f, param);
+            boardWidthChannel.Evaluate(currentRound, param, true);
+            boardHeightChannel.Evaluate(currentRound, param, true);
+            //roundTimerChannel.EvaluateDelta(1f, param);
             
             gameController.GenerateGame(GetDifficulty());
         }
@@ -34,9 +40,9 @@ namespace TangramGame.Scripts
         {
             return new GameDifficulty
             (
-                boardWidthChannel.GetDifficultyRounded(),
-                boardHeightChannel.GetDifficultyRounded(), 
-                roundTimerChannel.GetDifficulty()
+                Mathf.CeilToInt(boardWidthChannel.Difficulty),
+                Mathf.CeilToInt(boardHeightChannel.Difficulty),
+                20f//roundTimerChannel.GetDifficulty()
             );
         }
         

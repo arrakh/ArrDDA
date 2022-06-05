@@ -1124,9 +1124,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 1438574900}
-  boardWidthChannel: {fileID: 11400000, guid: 9153b0f7bc59cc341985187feda22e5f, type: 2}
-  boardHeightChannel: {fileID: 11400000, guid: 9153b0f7bc59cc341985187feda22e5f, type: 2}
-  roundTimerChannel: {fileID: 11400000, guid: 3779f01543d491548a04555bd7b2d648, type: 2}
+  boardWidthChannel: {fileID: 11400000, guid: 85fec3c84e9f09940b2aa423f8d139e6, type: 2}
+  boardHeightChannel: {fileID: 11400000, guid: d55d8ea611fcd93448353cad43b5124a, type: 2}
 --- !u!1 &1268670915
 GameObject:
   m_ObjectHideFlags: 0

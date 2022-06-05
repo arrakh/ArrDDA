@@ -45,7 +45,6 @@ namespace TangramGame.Scripts.Controllers
                 {
                     if (hit.collider == null) hit = h;
                     else if (h.collider.transform.position.z > hit.collider.transform.position.z) hit = h;
-                    Debug.Log($"{h.transform.name}: {h.collider.transform.position.z} > {hit.collider.transform.position.z}", h.transform.gameObject);
                 }
                 
                 if (hit.collider != null && hit.collider.TryGetComponent<IInteractable>(out var interactable))

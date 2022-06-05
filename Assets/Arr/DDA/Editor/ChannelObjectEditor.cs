@@ -6,20 +6,13 @@ using UnityEngine;
 
 namespace Arr.DDA.Editor
 {
-    [CustomEditor(typeof(ChannelObject))]
+    [CustomEditor(typeof(ChannelObject), true)]
     public class ChannelObjectEditor : UnityEditor.Editor
     {
         private DDAGraph graph;
-        private EvaluatorEditorHandler evalHandler;
-        private List<Vector2> points = new List<Vector2>();
         private ChannelObject Channel => target as ChannelObject;
 
-        private int evalIndex;
-        private int lastIndex;
-
-        private string lastName = String.Empty;
-
-        private void OnEnable()
+        /*private void OnEnable()
         {
             Channel.OnEvaluated += OnEvaluated;
         }
@@ -38,43 +31,43 @@ namespace Arr.DDA.Editor
             var vec = new Vector2(progression, difficulty);
             graph.AddPoint(vec, true);
             points.Add(vec);
-        }
+        }*/
 
+        private void OnSceneGUI()
+        {
+            OnInspectorGUI();
+        }
+        
         public override void OnInspectorGUI()
         {
             GUILayout.BeginVertical();
-            
-            if (graph == null) graph = new DDAGraph(Channel.ChannelName, points);
-            if (evalHandler == null) evalHandler = new EvaluatorEditorHandler();
 
-            if (!lastName.Equals(Channel.ChannelName))
+            var points = new List<Vector2>();
+
+            if(DynamicDifficulty.TryGetHistory(Channel.Id, out var history))
             {
-                lastName = Channel.ChannelName;
-                graph.SetName(lastName);
+                var newPoints = new List<Vector2>(history.Records.Count);
+                foreach (var record in history.Records)
+                    newPoints.Add(new Vector2(record.currentDifficulty, record.currentProgression));
+
+                points = newPoints;
             }
             
+            if (graph == null) graph = new DDAGraph(Channel.name, points);
+
             graph.Draw();
-            graph.Setting(Channel.Setting);
+            graph.Setting(Channel.Data);
+            GUILayout.Label($"DEBUG ID: {Channel.Id}");
             base.OnInspectorGUI();
 
-            EditorGUILayout.Separator();
-            if(Channel.Evaluator != null)EditorGUILayout.LabelField($"Evaluator: {Type.GetType(Channel.Evaluator)?.Name}");
-            
-            var eval = evalHandler.FindEvaluator();
-            evalIndex = EditorGUILayout.Popup(label: "Change Evaluator", evalIndex, 
-                Array.ConvertAll(eval, x => x.Name));
-
-            if (lastIndex != evalIndex)
-            {
-                lastIndex = evalIndex;
-                Channel.Evaluator = eval[evalIndex].AssemblyQualifiedName;
-            }
-            
-            
+            OnDraw();
             GUILayout.EndVertical();
             Repaint();
         }
-        
-        
+
+        protected virtual void OnDraw()
+        {
+            
+        }
     }
 }
