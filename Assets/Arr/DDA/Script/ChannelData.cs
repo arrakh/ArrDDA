@@ -32,6 +32,17 @@ namespace Arr.DDA.Script
         public float GetBoredomThreshold() => (slant * currentProgression) - (boredomThreshold * width) + flowOffset;
 
         public static ChannelData Default => new ChannelData(0f, 0f, 1f, 1f, 0f, 0.5f, 1f);
+
+        public override string ToString()
+        {
+            return $"Prog: {currentProgression.ToString("F2")} | " +
+                   $"Diff: {currentDifficulty.ToString("F2")} | " +
+                   $"Anx: {anxietyThreshold.ToString("F2")} | " +
+                   $"Bor: {boredomThreshold.ToString("F2")} | " +
+                   $"Offset: {flowOffset.ToString("F2")} | " +
+                   $"Width: {width.ToString("F2")} | " +
+                   $"Slant: {slant.ToString("F2")}";
+        }
     }
 
 }

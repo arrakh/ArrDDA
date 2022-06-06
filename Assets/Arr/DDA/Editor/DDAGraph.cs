@@ -199,8 +199,6 @@ namespace Arr.DDA.Editor
                 if (point.x < lowest.x) lowest.x = point.x;
                 if (point.y < lowest.y) lowest.y = point.y;
             }
-            
-            DrawLines();
         }
 
         public void Setting(float upper, float lower, float width, float offset, float slant)

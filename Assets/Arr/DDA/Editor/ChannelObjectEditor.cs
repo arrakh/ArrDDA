@@ -33,31 +33,24 @@ namespace Arr.DDA.Editor
             points.Add(vec);
         }*/
 
-        private void OnSceneGUI()
-        {
-            OnInspectorGUI();
-        }
-        
         public override void OnInspectorGUI()
         {
             GUILayout.BeginVertical();
 
-            var points = new List<Vector2>();
-
-            if(DynamicDifficulty.TryGetHistory(Channel.Id, out var history))
+            if (graph == null) graph = new DDAGraph(Channel.name);
+            
+            if(DynamicDifficulty.TryGetHistory(Channel, out var history))
             {
                 var newPoints = new List<Vector2>(history.Records.Count);
                 foreach (var record in history.Records)
-                    newPoints.Add(new Vector2(record.currentDifficulty, record.currentProgression));
+                    newPoints.Add(new Vector2(record.currentProgression, record.currentDifficulty));
 
-                points = newPoints;
+                Debug.Log("Got new points!");
+                graph.SetPoints(newPoints);
             }
-            
-            if (graph == null) graph = new DDAGraph(Channel.name, points);
 
             graph.Draw();
             graph.Setting(Channel.Data);
-            GUILayout.Label($"DEBUG ID: {Channel.Id}");
             base.OnInspectorGUI();
 
             OnDraw();

@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6135df28ce24416cb6936ea3bc6980e2, type: 3}
   m_Name: C_AdaptBoardHeight
   m_EditorClassIdentifier: 
-  data:
+  startingData:
     currentProgression: 0
-    currentDifficulty: 2
+    currentDifficulty: 3
     anxietyThreshold: 1
     boredomThreshold: 1
-    flowOffset: 2
+    flowOffset: 3
     width: 1
-    slant: 0.5
+    slant: 0.25
   regulationValue: 1
   smallModifier: 0.5
   bigModifier: 0

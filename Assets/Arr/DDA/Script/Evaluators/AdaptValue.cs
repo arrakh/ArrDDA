@@ -19,6 +19,8 @@ namespace Arr.DDA.Script.Evaluators
 
         public ChannelData Evaluate(ChannelData data, AdaptParameter parameter)
         {
+            Debug.Log($"[ADAPT] Old Data - {data}");
+            
             var diff = data.currentDifficulty;
 
             bool isAnxious = diff > data.GetAnxietyThreshold();
@@ -47,6 +49,8 @@ namespace Arr.DDA.Script.Evaluators
             else diff += parameter.isSuccess ? regulationValue : -regulationValue;
 
             data.currentDifficulty = diff;
+            
+            Debug.Log($"[ADAPT] New Data - {data}");
             return data;
         }
 
