@@ -11,6 +11,7 @@ namespace TangramGame.Scripts
         [SerializeField] private GameController gameController;
         [SerializeField] private AdaptValueChannel boardWidthChannel;
         [SerializeField] private AdaptValueChannel boardHeightChannel;
+        [SerializeField] private RestrainValueChannel boardRoundTime;
 
         private int currentRound = 0;
 
@@ -31,7 +32,7 @@ namespace TangramGame.Scripts
             var param = new AdaptParameter(result.isWin);
             boardWidthChannel.Evaluate(currentRound, param, true);
             boardHeightChannel.Evaluate(currentRound, param, true);
-            //roundTimerChannel.EvaluateDelta(1f, param);
+            boardRoundTime.Evaluate(currentRound, true);
             
             gameController.GenerateGame(GetDifficulty());
         }
@@ -42,7 +43,7 @@ namespace TangramGame.Scripts
             (
                 Mathf.CeilToInt(boardWidthChannel.Difficulty),
                 Mathf.CeilToInt(boardHeightChannel.Difficulty),
-                20f//roundTimerChannel.GetDifficulty()
+                boardRoundTime.Difficulty
             );
         }
         
