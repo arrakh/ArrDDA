@@ -7,6 +7,7 @@ using UnityEngine;
 namespace Arr.DDA.Editor
 {
     [CustomEditor(typeof(ChannelObject), true)]
+    [CanEditMultipleObjects]
     public class ChannelObjectEditor : UnityEditor.Editor
     {
         private DDAGraph graph;
@@ -51,11 +52,24 @@ namespace Arr.DDA.Editor
 
             graph.Draw();
             graph.Setting(Channel.Data);
+            GUILayout.Space(10f);
+            GUILayout.Label("Values");
+            DrawUILine(Color.white, 2, 0);
             base.OnInspectorGUI();
 
             OnDraw();
             GUILayout.EndVertical();
             Repaint();
+        }
+
+        public static void DrawUILine(Color color, int thickness = 2, int padding = 10)
+        {
+            Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
+            r.height = thickness;
+            r.y += padding / 2;
+            r.x -= 2;
+            r.width += 6;
+            EditorGUI.DrawRect(r, color);
         }
 
         protected virtual void OnDraw()
