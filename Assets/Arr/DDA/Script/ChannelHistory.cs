@@ -1,12 +1,12 @@
+using System;
 using System.Collections.Generic;
 
 namespace Arr.DDA.Script
 {
+    [Serializable]
     public struct ChannelHistory
     {
-        private readonly List<ChannelData> records;
-
-        public List<ChannelData> Records => records;
+        public List<ChannelData> records;
 
         public ChannelHistory(ChannelData startingData)
         {
@@ -14,8 +14,20 @@ namespace Arr.DDA.Script
             records.Add(startingData);
         }
 
-        public ChannelData LatestData => records.Count > 0 ? records[records.Count - 1] : ChannelData.Default;
+        public void Add(ChannelData newData, int limit = int.MaxValue)
+        {
+            if (records.Count > limit) records.RemoveRange(0, limit - records.Count);
+            records.Add(newData);
+        }
 
-        public void AddRecord(ChannelData data) => records.Add(data);
+        public ChannelData LatestData => records.Count > 0 ? records[^1] : ChannelData.Default;
+
+        public override string ToString()
+        {
+            var toPrint = "";
+            for (var i = 0; i < records.Count; i++)
+                toPrint += $"\n[{i}] {records[i]}";
+            return toPrint;
+        }
     }
 }

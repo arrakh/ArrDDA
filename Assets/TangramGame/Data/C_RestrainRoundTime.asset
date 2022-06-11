@@ -12,6 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a131fe60f11945dc80883b041839a515, type: 3}
   m_Name: C_RestrainRoundTime
   m_EditorClassIdentifier: 
+  drawSetting:
+    padding: 0
+    graphSize: 50
+    height: 350
+    lineGradientDistance: 0.1
+    cellIncrements: 5
+    zoom: {x: 1, y: 1}
+    drawLineGradient: 0
+    lineGradientAmount: 20
   startingData:
     currentProgression: 0
     currentDifficulty: 0
@@ -19,5 +28,5 @@ MonoBehaviour:
     boredomThreshold: 1
     flowOffset: 20
     width: 2
-    slant: -0.1
-  regulationValue: 1
+    slant: -0.3
+  regulationValue: 0.5

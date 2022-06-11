@@ -87,7 +87,7 @@ namespace TangramGame.Scripts
         public void OnTimerEnded()
         {
             shouldUpdateTimer = false;
-            EndRound(new RoundResult(false, lastDifficulty));
+            EndRound(new RoundResult(false, lastDifficulty, lastDifficulty.roundTime));
         }
 
         public void ClearGame()
@@ -102,7 +102,7 @@ namespace TangramGame.Scripts
 
         private void CheckForWin()
         {
-            if (grid.IsAllFilled()) EndRound(new RoundResult(true, lastDifficulty));
+            if (grid.IsAllFilled()) EndRound(new RoundResult(true, lastDifficulty, currentTimer.Current));
         }
 
         private void EndRound(RoundResult result)

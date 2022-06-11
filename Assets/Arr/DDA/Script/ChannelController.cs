@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Arr.DDA.Script
 {
+    [AddComponentMenu("")]
     public class ChannelController : MonoBehaviour
     {
         public Action OnDestroyed;
@@ -22,8 +23,14 @@ namespace Arr.DDA.Script
             evaluators[id] = evaluator;
             histories[id] = new ChannelHistory(startingData);
         }
+        
+        public void Initialize(ChannelObject id, ChannelHistory history, IEvaluator evaluator)
+        {
+            evaluators[id] = evaluator;
+            histories[id] = history;
+        }
 
-        public ChannelData Evaluate(ChannelObject id, float newProgression, bool record)
+        public ChannelData Evaluate(ChannelObject id, float newProgression, bool record, bool isDelta)
         {
             if (!evaluators.TryGetValue(id, out var evaluator))
             {
@@ -32,7 +39,8 @@ namespace Arr.DDA.Script
             }
             
             var data = TryGetData(id);
-            data.currentProgression = newProgression;
+            if (isDelta) data.currentProgression += newProgression;
+            else data.currentProgression = newProgression;
             var newData = evaluator.Evaluate(data);
             lastData[id] = newData;
             
@@ -41,7 +49,7 @@ namespace Arr.DDA.Script
             return newData;
         }
         
-        public ChannelData Evaluate<T>(ChannelObject channel, float newProgression, T parameter, bool record)
+        public ChannelData Evaluate<T>(ChannelObject channel, float newProgression, T parameter, bool record, bool isDelta)
         {
             if (!evaluators.TryGetValue(channel, out var evaluator))
             {
@@ -56,7 +64,8 @@ namespace Arr.DDA.Script
             }
 
             var data = TryGetData(channel);
-            data.currentProgression = newProgression;
+            if (isDelta) data.currentProgression += newProgression;
+            else data.currentProgression = newProgression;
             var newData = paramEval.Evaluate(data, parameter);
             lastData[channel] = newData;
             
@@ -65,15 +74,10 @@ namespace Arr.DDA.Script
             return newData;
         }
 
-        public void OverrideHistory(ChannelObject id, ChannelHistory newHistory)
-            => histories[id] = newHistory;
-
         public bool TryGetHistory(ChannelObject channel, out ChannelHistory history)
         {
-            Debug.Log("Trying to get history...");
             if (!histories.TryGetValue(channel, out history))
             {
-                Debug.Log("Couldn't get history, will get last data...");
                 bool findLastData = lastData.TryGetValue(channel, out var data);
                 if (findLastData)
                 {
@@ -83,7 +87,12 @@ namespace Arr.DDA.Script
             }
             else return true;
 
-            Debug.Log("Didn't get any?!?!");
+            return false;
+        }
+
+        public bool TryGetData(ChannelObject channel, out ChannelData data)
+        {
+            if (lastData.TryGetValue(channel, out data)) return true;
             return false;
         }
 
@@ -102,8 +111,8 @@ namespace Arr.DDA.Script
         {
             if (histories.TryGetValue(id, out var history))
             {
-                history.AddRecord(newData);
-                Debug.Log($"Recorded {name} with new data: {newData}");
+                history.Add(newData, 1000);
+                Debug.Log($"Recorded {name} with new data. History is now: \n{histories[id]}");
             }
             else histories[id] = new ChannelHistory(newData);
         }

@@ -13,13 +13,23 @@ namespace TangramGame.Scripts
         [SerializeField] private AdaptValueChannel boardHeightChannel;
         [SerializeField] private RestrainValueChannel boardRoundTime;
 
-        private int currentRound = 0;
-
         private void Start()
         {
-            boardHeightChannel.Initialize();
-            boardWidthChannel.Initialize();
-            gameController.GenerateGame(GetDifficulty());
+            var widthJson = PlayerPrefs.GetString("width", String.Empty);
+            var heightJson = PlayerPrefs.GetString("height", String.Empty);
+            
+            boardWidthChannel.InitializeFromJson(widthJson);
+            boardHeightChannel.InitializeFromJson(heightJson);
+            boardRoundTime.Initialize();
+            
+            var difficulty = new GameDifficulty
+            (
+                Mathf.CeilToInt(boardWidthChannel.GetDifficulty()),
+                Mathf.CeilToInt(boardHeightChannel.GetDifficulty()),
+                boardRoundTime.GetDifficulty()
+            );
+            
+            gameController.GenerateGame(difficulty);
         }
 
         private void OnEnable() => Events.OnRoundCompleted += OnRoundCompleted;
@@ -28,25 +38,25 @@ namespace TangramGame.Scripts
         private void OnRoundCompleted(RoundResult result)
         {
             //Evaluate difficulty here based on previous result
-            currentRound++;
             var param = new AdaptParameter(result.isWin);
-            boardWidthChannel.Evaluate(currentRound, param, true);
-            boardHeightChannel.Evaluate(currentRound, param, true);
-            boardRoundTime.Evaluate(currentRound, true);
+
+            var widthJson = boardWidthChannel.GetHistoryAsJson();
+            var heightJson = boardHeightChannel.GetHistoryAsJson();
             
-            gameController.GenerateGame(GetDifficulty());
+            PlayerPrefs.SetString("width", widthJson);
+            PlayerPrefs.SetString("height", heightJson);
+
+            var timeProg = (result.difficulty.roundTime - result.timeSpent) / 5f;
+            var difficulty = new GameDifficulty
+            (
+                Mathf.CeilToInt(boardWidthChannel.Evaluate(1, param)),
+                Mathf.CeilToInt(boardHeightChannel.Evaluate(1, param)),
+                boardRoundTime.Evaluate(timeProg)
+            );
+            
+            gameController.GenerateGame(difficulty);
         }
 
-        private GameDifficulty GetDifficulty()
-        {
-            return new GameDifficulty
-            (
-                Mathf.CeilToInt(boardWidthChannel.Difficulty),
-                Mathf.CeilToInt(boardHeightChannel.Difficulty),
-                boardRoundTime.Difficulty
-            );
-        }
-        
         private GameDifficulty GetDifficultyRandom()
         {
             return new GameDifficulty

@@ -42,34 +42,24 @@ namespace Arr.DDA.Editor
             
             if(DynamicDifficulty.TryGetHistory(Channel, out var history))
             {
-                var newPoints = new List<Vector2>(history.Records.Count);
-                foreach (var record in history.Records)
+                var newPoints = new List<Vector2>(history.records.Count);
+                foreach (var record in history.records)
                     newPoints.Add(new Vector2(record.currentProgression, record.currentDifficulty));
 
-                Debug.Log("Got new points!");
+                //Debug.Log("Got new points!");
                 graph.SetPoints(newPoints);
             }
 
             graph.Draw();
-            graph.Setting(Channel.Data);
+            var hasData = DynamicDifficulty.TryGetData(Channel, out var data);
+            graph.Setting(hasData ? data : Channel.startingData);
             GUILayout.Space(10f);
-            GUILayout.Label("Values");
-            DrawUILine(Color.white, 2, 0);
             base.OnInspectorGUI();
+            graph.SetDrawSetting(Channel.drawSetting);
 
             OnDraw();
             GUILayout.EndVertical();
             Repaint();
-        }
-
-        public static void DrawUILine(Color color, int thickness = 2, int padding = 10)
-        {
-            Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
-            r.height = thickness;
-            r.y += padding / 2;
-            r.x -= 2;
-            r.width += 6;
-            EditorGUI.DrawRect(r, color);
         }
 
         protected virtual void OnDraw()

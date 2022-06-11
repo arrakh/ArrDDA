@@ -19,15 +19,7 @@ namespace Arr.DDA.Editor
 
         private GUIChartEditor.ChartFunction upperboundFunction;
         private GUIChartEditor.ChartFunction lowerboundFunction;
-        private DrawSetting drawSetting;
-
-        public struct DrawSetting
-        {
-            public float padding, minBound, maxBound, height, lineGradientDistance;
-            public Vector2 zoom;
-            public bool drawLineGradient;
-            public int lineGradientAmount;
-        }
+        private ChannelDrawSetting drawSetting = ChannelDrawSetting.Default;
 
         public DDAGraph(string name, List<Vector2> graphPoints = null)
         {
@@ -44,14 +36,7 @@ namespace Arr.DDA.Editor
             lowerboundFunction = x => (x * slant) - (lower * width) + offset;
 
             upper = lower = slant = 1f;
-            drawSetting.padding = width = 0.5f;
-            
-            drawSetting.minBound = 0f;
-            drawSetting.maxBound = 10f;
-            drawSetting.height = 240;
-            drawSetting.lineGradientDistance = 0.1f;
-            drawSetting.lineGradientAmount = 50;
-            drawSetting.zoom = Vector2.one;
+            width = 0.5f;
         }
 
         public void SetName(string newName) => name = newName;
@@ -65,23 +50,24 @@ namespace Arr.DDA.Editor
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
             //Substitute bound func if higher/lower so bound is always visible
-            var funcHigh = upperboundFunction.Invoke(highest.x + drawSetting.maxBound);
-            var funcLow = lowerboundFunction.Invoke(lowest.x + drawSetting.minBound);
+            var funcHigh = upperboundFunction.Invoke(highest.x + drawSetting.graphSize);
+            var funcLow = lowerboundFunction.Invoke(lowest.x);
             var highestY = funcHigh > highest.y ? funcHigh : highest.y;
             var lowestY = funcLow < lowest.y ? funcLow : lowest.y;
 
             //Find padded min and max based on lowest or highest recorded position
-            var minX = Mathf.Clamp(lowest.x - drawSetting.padding, float.MinValue, drawSetting.minBound);
-            var maxX = Mathf.Clamp(highest.x + drawSetting.padding, drawSetting.maxBound, float.MaxValue) * drawSetting.zoom.x;
-            var minY = Mathf.Clamp(lowestY - drawSetting.padding, float.MinValue, drawSetting.minBound);
-            var maxY = Mathf.Clamp(highestY + drawSetting.padding, drawSetting.maxBound, float.MaxValue) * drawSetting.zoom.y;
+            var minX = Mathf.Clamp(lowest.x - drawSetting.padding, float.MinValue, 0f) - drawSetting.zoom.x * drawSetting.cellIncrements;
+            var maxX = Mathf.Clamp(highest.x + drawSetting.padding, drawSetting.graphSize, float.MaxValue) * drawSetting.zoom.x + drawSetting.zoom.x * drawSetting.cellIncrements;
+            var minY = Mathf.Clamp(lowestY - drawSetting.padding, float.MinValue, 0f) - drawSetting.zoom.y * drawSetting.cellIncrements;
+            var maxY = Mathf.Clamp(highestY + drawSetting.padding, drawSetting.graphSize, float.MaxValue) * drawSetting.zoom.y + drawSetting.zoom.y * drawSetting.cellIncrements;
 
-            var boundDiff = drawSetting.maxBound - drawSetting.minBound;
-            relativeScale.x = (maxX - minX) / boundDiff;
-            relativeScale.y = (maxY - minY) / boundDiff;
+            relativeScale.x = (maxX - minX) / drawSetting.graphSize;
+            relativeScale.y = (maxY - minY) / drawSetting.graphSize;
+ 
+            var cellIncrement = 1 / drawSetting.cellIncrements;
 
-            var cellXIncrement = Mathf.Clamp(Mathf.Ceil(relativeScale.x - 1) / 2f, 0.1f, float.MaxValue);
-            var cellYIncrement = Mathf.Clamp(Mathf.Ceil(relativeScale.y - 1) / 2f, 0.1f, float.MaxValue);
+            var cellXIncrement = Mathf.Clamp(Mathf.Ceil(relativeScale.x - 1) / cellIncrement, 0.01f, float.MaxValue);
+            var cellYIncrement = Mathf.Clamp(Mathf.Ceil(relativeScale.y - 1) / cellIncrement, 0.01f, float.MaxValue);
             
             GUIChartEditor.BeginChart(10, 10, 10, drawSetting.height, Color.black,
                 GUIChartEditorOptions.ChartBounds(minX, maxX, minY, maxY),
@@ -99,10 +85,6 @@ namespace Arr.DDA.Editor
             
             DebugPointer();
             GUIChartEditor.EndChart();
-
-            EditorGUILayout.Space(10f);
-
-            DrawSettings();
 
             GUILayout.EndVertical();
         }
@@ -125,13 +107,22 @@ namespace Arr.DDA.Editor
                 GUIChartEditor.PushFunction(x => lowerboundFunction(x) - (drawSetting.lineGradientDistance * mult * relativeScale.y), float.MinValue, float.MaxValue, color);
             }
         }
-
+        
         private void DrawLines()
         {
             if (points.Count <= 0) return;
             
             GUIChartEditor.PushLineChart(points.ToArray(), Color.cyan);
 
+
+            if (drawSetting.drawPoints)
+            {
+                foreach (var p in points)
+                {
+                    GUIChartEditor.PushPoint(p, Color.grey);
+                }
+            }
+            
             var point = points[points.Count - 1];
 
             GUIChartEditor.PushPoint(point,
@@ -149,32 +140,6 @@ namespace Arr.DDA.Editor
             if (pointer.y > highest.y) highest.y = pointer.y;
             if (pointer.x < lowest.x) lowest.x = pointer.x;
             if (pointer.y < lowest.y) lowest.y = pointer.y;
-        }
-
-        private bool drawSettingFoldout;
-        private void DrawSettings()
-        {
-            drawSettingFoldout = EditorGUILayout.Foldout(drawSettingFoldout, "Draw Settings");
-
-            if (drawSettingFoldout)
-            {
-                pointer = EditorGUILayout.Vector2Field("Debug Draw", pointer);
-                if(GUILayout.Button("Reset Highest")) highest = lowest = pointer = Vector2.zero;
-                
-                drawSetting.zoom = EditorGUILayout.Vector2Field("Zoom", drawSetting.zoom);
-                drawSetting.padding = Mathf.Abs(EditorGUILayout.FloatField("Padding", drawSetting.padding));
-                drawSetting.minBound = EditorGUILayout.FloatField("Min Bound", drawSetting.minBound);
-                drawSetting.maxBound = EditorGUILayout.FloatField("Max Bound", drawSetting.maxBound);
-                drawSetting.height = Mathf.Abs(EditorGUILayout.FloatField("Graph Height", drawSetting.height));
-                GUILayout.Space(10f);
-                drawSetting.drawLineGradient = EditorGUILayout.Toggle("Draw Line Gradient", drawSetting.drawLineGradient);
-
-                if (drawSetting.drawLineGradient)
-                {
-                    drawSetting.lineGradientAmount = EditorGUILayout.IntField("Line Amount", drawSetting.lineGradientAmount);
-                    drawSetting.lineGradientDistance = Mathf.Abs(EditorGUILayout.FloatField("Line Distance", drawSetting.lineGradientDistance));
-                }
-            }
         }
 
         public void AddPoint(Vector2 point, bool redraw = false)
@@ -220,5 +185,7 @@ namespace Arr.DDA.Editor
             pointer.x = setting.currentProgression;
             pointer.y = setting.currentDifficulty;
         }
+
+        public void SetDrawSetting(ChannelDrawSetting setting) => drawSetting = setting;
     }
 }

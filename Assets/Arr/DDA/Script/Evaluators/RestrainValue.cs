@@ -11,8 +11,6 @@ namespace Arr.DDA.Script.Evaluators
             this.regulationValue = regulationValue;
         }
 
-        public RestrainValue() { }
-
         public ChannelData Evaluate(ChannelData data)
         {
             float diff = data.currentDifficulty;
