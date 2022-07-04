@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TangramGame.Scripts.Controllers
 {
     public class InteractionController : MonoBehaviour
     {
-        [SerializeField] private Camera camera;
+        [FormerlySerializedAs("camera")] [SerializeField] private Camera cam;
 
         private IInteractable current;
 
@@ -24,7 +25,7 @@ namespace TangramGame.Scripts.Controllers
         {
             if (shouldDrag)
             {
-                var worldPos = camera.ScreenToWorldPoint(Input.mousePosition);
+                var worldPos = cam.ScreenToWorldPoint(Input.mousePosition);
                 current.OnDrag(worldPos);
             }
             
@@ -37,7 +38,7 @@ namespace TangramGame.Scripts.Controllers
                     shouldDrag = false;
                 }
                 
-                var worldPos = camera.ScreenToWorldPoint(Input.mousePosition);
+                var worldPos = cam.ScreenToWorldPoint(Input.mousePosition);
                 var hits = Physics2D.RaycastAll(worldPos, Vector2.zero);
                 RaycastHit2D hit = new RaycastHit2D();
 
@@ -57,7 +58,7 @@ namespace TangramGame.Scripts.Controllers
 
             if (Input.GetMouseButtonUp(0) && current != null)
             {
-                var worldPos = camera.ScreenToWorldPoint(Input.mousePosition);
+                var worldPos = cam.ScreenToWorldPoint(Input.mousePosition);
                 current.OnDrop(worldPos);
                 current = null;
                 shouldDrag = false;

@@ -1,0 +1,20 @@
+{
+    "name": "com.arr.dda",
+    "version": "1.0.0",
+    "displayName": "ArrDDA",
+    "description": "ArrDDA is a Framework to start implementing Dynamic Difficulty Adjustments to your game mechanics.",
+    "unity": "2019.1",
+    "unityRelease": "0b5",
+    "documentationUrl": "https://example.com/",
+    "changelogUrl": "https://example.com/changelog.html",
+    "licensesUrl": "https://example.com/licensing.html",
+    "dependencies": {
+   },
+   "keywords": [
+    ],
+    "author": {
+      "name": "Arrakh",
+      "email": "arrakhpra@gmail.com",
+      "url": "http://arrakh.com"
+    }
+  }

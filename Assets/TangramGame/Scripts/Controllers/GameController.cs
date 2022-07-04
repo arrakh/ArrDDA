@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TangramGame.Scripts.Controllers;
 using TangramGame.Scripts.GridSystem;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace TangramGame.Scripts
@@ -12,7 +13,7 @@ namespace TangramGame.Scripts
     {
         [SerializeField] private GridController grid;
         [SerializeField] private TileContentObject contentPrefab;
-        [SerializeField] private CameraController camera;
+        [FormerlySerializedAs("camera")] [SerializeField] private CameraController cam;
 
         private List<TileContentObject> placedContents = new List<TileContentObject>();
         private List<TileContentObject> spawnedContents = new List<TileContentObject>();
@@ -75,7 +76,7 @@ namespace TangramGame.Scripts
                 delay += 0.1f;
             }
             
-            camera.MoveToGrid(grid);
+            cam.MoveToGrid(grid);
 
             currentTimer = new GameTimer(gameDifficulty.roundTime);
             currentTimer.OnTimerEnd.AddListener(OnTimerEnded);

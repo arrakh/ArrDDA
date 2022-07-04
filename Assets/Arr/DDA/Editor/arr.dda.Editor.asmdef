@@ -1,0 +1,17 @@
+{
+    "name": "arr.dda",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e8ba0e67e6c825a4bb5d529c6d0f10d2",
+        "GUID:d6e0b76aa654bbd459734f91a38e2842"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -13,20 +13,21 @@ MonoBehaviour:
   m_Name: C_RestrainRoundTime
   m_EditorClassIdentifier: 
   drawSetting:
-    padding: 0
-    graphSize: 50
-    height: 350
-    lineGradientDistance: 0.1
-    cellIncrements: 5
     zoom: {x: 1, y: 1}
+    graphSize: 29.3
+    cellIncrements: 5
+    padding: 0
+    height: 350
+    drawPoints: 1
     drawLineGradient: 0
+    lineGradientDistance: 0.1
     lineGradientAmount: 20
   startingData:
     currentProgression: 0
-    currentDifficulty: 0
+    currentDifficulty: 30
     anxietyThreshold: 1
     boredomThreshold: 1
-    flowOffset: 20
+    flowOffset: 30
     width: 2
     slant: -0.3
   regulationValue: 0.5

@@ -18,7 +18,7 @@ namespace TangramGame.Scripts
         private Action<TileContentObject, Vector2> OnContentDragged;
 
         private List<TileContentElement> elements = new List<TileContentElement>();
-        private Camera camera;
+        private Camera cam;
         private Vector3 pickedUpOffset;
         
         public Vector2 initPos;
@@ -33,7 +33,7 @@ namespace TangramGame.Scripts
             Action<TileContentObject, Vector2> onDragged = null)
         {
             Content = tp;
-            camera = Camera.main;
+            cam = Camera.main;
             
             LastOrder++;
 

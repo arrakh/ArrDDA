@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: C_AdaptBoardWidth
   m_EditorClassIdentifier: 
   drawSetting:
-    padding: 0
-    graphSize: 20
-    height: 320
-    lineGradientDistance: 0.1
-    cellIncrements: 1
     zoom: {x: 1, y: 1}
+    graphSize: 20
+    cellIncrements: 1
+    padding: 0
+    height: 320
+    drawPoints: 1
     drawLineGradient: 0
+    lineGradientDistance: 0.1
     lineGradientAmount: 20
   startingData:
     currentProgression: 0
@@ -28,7 +29,7 @@ MonoBehaviour:
     boredomThreshold: 1
     flowOffset: 3
     width: 1
-    slant: 0.25
+    slant: 0.28
   regulationValue: 1
   smallModifier: 1
   bigModifier: 2
