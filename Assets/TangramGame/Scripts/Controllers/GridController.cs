@@ -98,7 +98,9 @@ namespace TangramGame.Scripts
         public void ClearLastPreShows()
         {
             foreach (var pos in lastPreShowPositions)
-                tileControllers[pos].SetPreShow(false, false);
+            {
+                if (tileControllers.TryGetValue(pos, out var tile)) tile.SetPreShow(false, false);
+            }
             lastPreShowPositions.Clear();
         }
         

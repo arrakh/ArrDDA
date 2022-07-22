@@ -15,7 +15,7 @@ Contents :
 
 First, we need to define what we needed in our tangram block game. Then, we need to find values or parameters that can be used for our dynamic difficulty adjustment.  
 
-In this game, the mechanics tha can be dynamically adjusted are :  
+In this game, the mechanics that can be dynamically adjusted are :  
 
 - Grid size
 - Total block pieces, and

@@ -2,32 +2,32 @@
 
 ## __This plugin are created for educational purpose only__
 
-Arr DDA (Dynamic Difficulty Adjustment) are a tool for developers and game designers to help them create a game with smart AI that can adjust the game difficulty
+Arr DDA (Dynamic Difficulty Adjustment) is a framework for developers and game designers to develop or use a pre-existing algorithm to dynamically adjust their game's difficulty.
 
 The purpose of this tool are :
 
-* Helping Developer and Game Designers to create an AI that can adjust difficulty to the player behaviour easily
+* Helping Developer and Game Designers to create an AI or algorithm that can adjust difficulty to the player behaviour easily
 * Keeping the game fun by making all parameters used in the game all shown and can be controlled using graphical editor
 
 ## Current Features
 
 * Easy way to manage multiple difficulties
-* Graph Illustration to help game designer shows what will happen and what's happening inside the game
+* Graph Illustration to help game designer show what will happen and what's happening inside the game
 * Graphical Editor to help designers tweak the difficulties without touching and changing a single line of code
 
 ## Setup
 
-* Download the necessary package from designated download
-* Import the package into your Unity projects
-* You can now start using the DDA
+* Download the necessary package from the Release section
+* Import the package into your Unity project by opening the .unitypackage file
+* Refer to the Documentation or Quickstart guide to start.
 
 ## Basic Usage Example
 
-Here are basic usage example of ArrDDA. You can read more about it [here.](Quickstart.md)
+To quickly start using DDA, you can refer to our Quickstart as a basic usage guide [here.](Quickstart.md)
 
 ## Documentation
 
-Documentation for ArrDDA are right [here.](Documentation.md)
+You can refer to the full Documentation of the framework [here.](Documentation.md)
 
 ## Contribution & License
 
